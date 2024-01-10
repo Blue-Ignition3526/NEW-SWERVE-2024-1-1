@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -9,7 +11,6 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -156,6 +157,7 @@ public class SwerveModule extends SubsystemBase {
             return;
         }
     
+        // Set the state
         this.state = state;
 
         // Optimize the state
@@ -211,13 +213,25 @@ public class SwerveModule extends SubsystemBase {
     @Override
     public void periodic() {
         // Showt the absolute encoder value on the dashboard
-        SmartDashboard.putNumber("SwerveDrive/" + m_name + "Abs Encoder Rad", getAbsoluteEncoderRad());
+        Logger.recordOutput("SwerveDrive/" + m_name + "AbsEncoderRad", getAbsoluteEncoderRad());
 
-        // Show the turning motor encoder value on the dashboard
-        SmartDashboard.putNumber("SwerveDrive/" + m_name + "Motor Turning Encoder Rad", getTurningEncoderPositionRad());
+        // Show the absolute encoder value in degrees on the dashboard
+        Logger.recordOutput("SwerveDrive/" + m_name + "AbsEncoderDeg", Math.toDegrees(getAbsoluteEncoderRad()));
 
-        // Show the turning motor encoder value on the dashboard
-        SmartDashboard.putNumber("SwerveDrive/" + m_name + "Motor Turning Encoder Rad", this.state.angle.getRadians());
+        // Show the turning motor encoder value in radians on the dashboard
+        Logger.recordOutput("SwerveDrive/" + m_name + "MotorTurningEncoderRad", getTurningEncoderPositionRad());
+
+        // Show the turning motor encoder value in degrees on the dashboard
+        Logger.recordOutput("SwerveDrive/" + m_name + "MotorTurningEncoderDeg", Math.toDegrees(getTurningEncoderPositionRad()));
+
+        // Show the target state speed and rotation in radians and degrees on the dashboard
+        Logger.recordOutput("SwerveDrive/" + m_name + "TargetSpeed", state.speedMetersPerSecond);
+        Logger.recordOutput("SwerveDrive/" + m_name + "TargetRotationRad", state.angle.getRadians());
+        Logger.recordOutput("SwerveDrive/" + m_name + "TargetRotationDeg", state.angle.getDegrees());
+
+        // Log the state and position of the swerve module
+        Logger.recordOutput("SwerveDrive/" + m_name + "State", state);
+        Logger.recordOutput("SwerveDrive/" + m_name + "Position", getPosition());
 
         // Sync the turn motor encoder with the absolute encoder constantly
         syncTurnMotorEncoderSmooth();

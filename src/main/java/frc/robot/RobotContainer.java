@@ -10,10 +10,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveSwerve;
-import frc.robot.commands.IntakeIn;
-import frc.robot.commands.IntakeOut;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
 
@@ -68,8 +67,8 @@ public class RobotContainer {
     this.m_swerveDrive = new SwerveDrive(this.m_frontLeft, this.m_frontRight, this.m_backLeft, this.m_backRight);
 
     // Register all commands needed for Autonomous
-    NamedCommands.registerCommand("IntakeIn", new IntakeIn());
-    NamedCommands.registerCommand("IntakeOut", new IntakeOut());
+    NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));
+    NamedCommands.registerCommand("IntakeOut", new WaitCommand(1));
 
     // Create a sendable chooser for the autonomous routines
     SendableChooser<Command> m_autonomousChooser = AutoBuilder.buildAutoChooser();

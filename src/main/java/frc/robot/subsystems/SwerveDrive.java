@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -264,5 +266,20 @@ public class SwerveDrive extends SubsystemBase{
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        Logger.recordOutput("SwerveDrive/RobotHeadingRad", this.getRotation2d().getRadians());
+        Logger.recordOutput("SwerveDrive/RobotHeadingDeg", this.getRotation2d().getDegrees());
+        
+        Logger.recordOutput("SwerveDrive/RobotPose", this.getPose());
+        Logger.recordOutput("SwerveDrive/RobotX", this.getPose().getX());
+        Logger.recordOutput("SwerveDrive/RobotY", this.getPose().getY());
+
+        Logger.recordOutput("SwerveDrive/RobotRelative", this.drivingRobotRelative);
+        Logger.recordOutput("SwerveDrive/RobotSpeeds", this.getRobotRelativeChassisSpeeds());
+
+        Logger.recordOutput("SwerveDrive/XSpeedMpS", m_gyro.getVelocityX());
+        Logger.recordOutput("SwerveDrive/YSpeedMpS", m_gyro.getVelocityY());
+
+        Logger.recordOutput("SwerveDrive/SwerveModuleStates", this.getModuleStates());
+    }
 }
