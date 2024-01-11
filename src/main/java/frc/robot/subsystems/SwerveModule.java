@@ -189,7 +189,14 @@ public class SwerveModule extends SubsystemBase {
         // The speed is given in meters per second, so we need to convert from [-1, 1]
         // To do that we divide it by the max speed of robot
         // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
+        m_driveMotorPIDController.setP(0.15);
+        m_driveMotorPIDController.setI(0.0000000005);
         m_driveMotorPIDController.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
+        
+        // Show the applied speed percentage on the dashboard
+        Logger.recordOutput("SwerveDrive/" + m_name + "/AppliedSpeedPercentage", m_driveMotor.getAppliedOutput());
+        Logger.recordOutput("SwerveDrive/" + m_name + "/TargetSpeedPMpS", optimizedState.speedMetersPerSecond);
+        Logger.recordOutput("SwerveDrive/" + m_name + "/RealSpeedPMpS", m_driveMotorEncoder.getVelocity());
     
         // Set the turning motor speed
         // The speed is not given to us, rather the angle we want to turn to

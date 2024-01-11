@@ -6,8 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -85,9 +83,9 @@ public class DriveSwerve extends Command {
     double rotSpeed = this.rotSpeed.get();
 
     // If the speeds are lower than the deadzone
-    xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed*20 : 0.0;
-    ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed*20 : 0.0;
-    rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed*20 : 0.0;
+    xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed * 5 : 0.0;
+    ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed * 5 : 0.0;
+    rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed * 5 : 0.0;
 
     // Multiply by the top speed
     xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond;
