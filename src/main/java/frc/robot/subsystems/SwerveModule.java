@@ -6,6 +6,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.filter.LinearFilter;
@@ -70,6 +72,11 @@ public class SwerveModule extends SubsystemBase {
     private LinearFilter turnEncoderSyncFilter = LinearFilter.singlePoleIIR(1, 0.2);
 
     /**
+     * Turning motor PID controller
+     */
+    private SparkPIDController m_driveMotorPIDController;
+
+    /**
      * Last timestamp when the motor encoders updated
      */
     private double lastMotorEncoderUpdateTime = Timer.getFPGATimestamp();
@@ -98,6 +105,8 @@ public class SwerveModule extends SubsystemBase {
             .withMagnetOffset((m_turningEncoderOffsetRad + Constants.Swerve.Module.kGlobalTurningOffsetRad) / (2 * Math.PI))
             .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
         );
+
+        this.m_driveMotorPIDController = m_driveMotor.getPIDController();
 
         // Configure encoder conversions
         this.m_driveMotorEncoder.setPositionConversionFactor(Constants.Swerve.Module.kDriveEncoder_RotationToMeter); 
@@ -175,10 +184,12 @@ public class SwerveModule extends SubsystemBase {
         // Optimize the state
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getTurningEncoderPositionRad()));
     
+        // ! PAST IMPLEMENTATION (NOT ACCURATE)
         // Set the drive motor speed
         // The speed is given in meters per second, so we need to convert from [-1, 1]
         // To do that we divide it by the max speed of robot
-        m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
+        // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
+        m_driveMotorPIDController.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
     
         // Set the turning motor speed
         // The speed is not given to us, rather the angle we want to turn to
