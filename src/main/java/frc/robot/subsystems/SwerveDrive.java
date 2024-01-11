@@ -54,7 +54,7 @@ public class SwerveDrive extends SubsystemBase{
     /**
      * Current chasis speeds
      */
-    private ChassisSpeeds m_chassisSpeeds;
+    private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
     
     /**
      * If the current chasis speeds are robot relative or field relative
@@ -270,9 +270,9 @@ public class SwerveDrive extends SubsystemBase{
         Logger.recordOutput("SwerveDrive/RobotHeadingRad", this.getRotation2d().getRadians());
         Logger.recordOutput("SwerveDrive/RobotHeadingDeg", this.getRotation2d().getDegrees());
         
-        Logger.recordOutput("SwerveDrive/RobotPose", this.getPose());
-        Logger.recordOutput("SwerveDrive/RobotX", this.getPose().getX());
-        Logger.recordOutput("SwerveDrive/RobotY", this.getPose().getY());
+        // Logger.recordOutput("SwerveDrive/RobotPose", this.getPose());
+        // Logger.recordOutput("SwerveDrive/RobotX", this.getPose().getX());
+        // Logger.recordOutput("SwerveDrive/RobotY", this.getPose().getY());
 
         Logger.recordOutput("SwerveDrive/RobotRelative", this.drivingRobotRelative);
         Logger.recordOutput("SwerveDrive/RobotSpeeds", this.getRobotRelativeChassisSpeeds());

@@ -29,7 +29,7 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
 
-  public PowerDistribution pdp = new PowerDistribution(1, ModuleType.kAutomatic); // Enables power distribution logging
+  public PowerDistribution pdp = new PowerDistribution(1, ModuleType.kCTRE); // Enables power distribution logging
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,17 +41,20 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    // Reset PDP
+    pdp.clearStickyFaults();;
+
     // AdvantageKit Config
     if (isReal()) {
       try {
-        Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+        // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       } catch (Exception e) { System.out.println("Not logging to USB: " + e.getMessage()); }
     } else {
-      setUseTiming(false); // Run as fast as possible
       try {
-        String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+        // setUseTiming(false); // Run as fast as possible
+        // String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+        // Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        // Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
       } catch (Exception e) { System.out.println("Not replaying: " + e.getMessage()); }
     }
     try {
@@ -60,7 +63,6 @@ public class Robot extends LoggedRobot {
 
     // URCL Config
     Logger.registerURCL(URCL.startExternal());
-    Logger.start();
 
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
