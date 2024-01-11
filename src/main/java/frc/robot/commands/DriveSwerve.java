@@ -83,14 +83,14 @@ public class DriveSwerve extends Command {
     double rotSpeed = this.rotSpeed.get();
 
     // If the speeds are lower than the deadzone
-    xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed * 5 : 0.0;
-    ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed * 5 : 0.0;
-    rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed * 5 : 0.0;
+    xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed : 0.0;
+    ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed : 0.0;
+    rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
 
     // Multiply by the top speed
-    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond;
-    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond;
-    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond;
+    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
+    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
+    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond / 2;
 
 
     if (this.fieldRelative.get()) {

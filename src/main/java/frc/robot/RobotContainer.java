@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
+import frc.robot.subsystems.VisionSubsystem;
 
 
 /**
@@ -56,7 +57,12 @@ public class RobotContainer {
    */
   SendableChooser<Command> m_autonomousChooser;
 
+  VisionSubsystem vision;
+
   public RobotContainer() {
+    // Create a new vision subsytem
+    this.vision = new VisionSubsystem();
+
     // Create all swerve modules and initialize
     this.m_frontLeft = new SwerveModule((Constants.Swerve.Motors.kFrontLeftVars));
     this.m_frontRight = new SwerveModule((Constants.Swerve.Motors.kFrontRightVars));
@@ -86,7 +92,7 @@ public class RobotContainer {
         m_swerveDrive,
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
-        () -> m_driverController.getRightX(),
+        () -> -m_driverController.getRightX(),
         () -> !m_driverController.rightBumper().getAsBoolean()
       )
     );
