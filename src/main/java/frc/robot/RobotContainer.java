@@ -90,20 +90,24 @@ public class RobotContainer {
     m_swerveDrive.setDefaultCommand(
       new DriveSwerve(
         m_swerveDrive,
+        vision,
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        () -> !m_driverController.rightBumper().getAsBoolean()
+        () -> !m_driverController.rightBumper().getAsBoolean(),
+        () -> !m_driverController.leftBumper().getAsBoolean()
       )
     );
 
     // When the right trigger is pressed, drive the swerve drive forward
     m_driverController.rightTrigger(0.1).whileTrue(new DriveSwerve(
       m_swerveDrive,
+      vision,
       () -> m_driverController.getRightTriggerAxis(),
       () -> 0.0,
       () -> 0.0,
-      () -> !m_driverController.rightBumper().getAsBoolean()
+      () -> !m_driverController.rightBumper().getAsBoolean(),
+      () -> false
     ));
   }
 

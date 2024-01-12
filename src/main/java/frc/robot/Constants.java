@@ -59,12 +59,22 @@ public final class Constants {
       new Rotation3d(0, 0, 0)
     );
 
+    public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
+      0.5, // P
+      0, // I
+      0  // D
+    };
+
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
 
     // The standard deviations of our vision estimated poses, which affect correction rates
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8); // Experimentally determined
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1); // Experimentally determined
+
+    public final static class AprilTags {
+      public static final int kSpeakerTagID = 10; // TODO: change tag id
+    }
   }
 
   public final static class Swerve {

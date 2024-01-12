@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Physical;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.VisionSubsystem;
 
 public class DriveSwerve extends Command {
   /**
@@ -39,6 +41,11 @@ public class DriveSwerve extends Command {
   Supplier<Boolean> fieldRelative;
 
   /**
+   * Whether to track the speaker
+   */
+  Supplier<Boolean> activeTrackSpeaker;
+
+  /**
    * Slew rate limiters
    */
   SlewRateLimiter xLimiter = new SlewRateLimiter(Constants.Swerve.Physical.kTeleopMaxAccelerationUnitsPerSecond);
@@ -54,6 +61,11 @@ public class DriveSwerve extends Command {
   SlewRateLimiter rotLimiter = new SlewRateLimiter(Constants.Swerve.Physical.kTeleopMaxAngularAccelerationUnitsPerSecond);
 
   /**
+   * Vision subsystem
+   */
+  VisionSubsystem vision;
+
+  /**
    * Creates a new DriveSwerve command.
    * @param m_swerveDrive The swerve drive subsystem
    * @param x The x speed supplier
@@ -61,12 +73,14 @@ public class DriveSwerve extends Command {
    * @param rot The rotation speed supplier
    * @param fieldRelative Whether the drive is field relative
    */
-  public DriveSwerve(SwerveDrive m_swerveDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative) {
+  public DriveSwerve(SwerveDrive m_swerveDrive, VisionSubsystem vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative, Supplier<Boolean> activeTrackSpeaker) {
     this.m_swerveDrive = m_swerveDrive;
     this.xSpeed = x;
     this.ySpeed = y;
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
+    this.activeTrackSpeaker = activeTrackSpeaker;
+    this.vision = vision;
     addRequirements(m_swerveDrive);
   }
 
@@ -82,17 +96,31 @@ public class DriveSwerve extends Command {
     double ySpeed = this.ySpeed.get();
     double rotSpeed = this.rotSpeed.get();
 
+    if (activeTrackSpeaker.get()){
+      Optional<Double> rotSpeedOpt = vision.calculateRotSpeed(Constants.Vision.AprilTags.kSpeakerTagID);
+      if (rotSpeedOpt.isPresent()){
+        rotSpeed = rotSpeedOpt.get();
+      } else {
+        activeTrackSpeaker = () -> true;
+      }
+    }
+
     // If the speeds are lower than the deadzone
     xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed : 0.0;
     ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed : 0.0;
-    rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
+
+    if (!activeTrackSpeaker.get()){ // If the speaker is not being tracked
+      rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
+    }
 
     // Multiply by the top speed
     xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
     ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
-    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond / 2;
+    if (!activeTrackSpeaker.get()){ // If the speaker is not being tracked
+      rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond / 2;
+    }
 
-
+    // Drive the robot
     if (this.fieldRelative.get()) {
       m_swerveDrive.driveFieldRelative(xSpeed, ySpeed, rotSpeed);
     } else {
