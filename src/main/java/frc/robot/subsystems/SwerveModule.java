@@ -10,7 +10,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.filter.LinearFilter;
+// import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -69,7 +69,7 @@ public class SwerveModule extends SubsystemBase {
     /**
      * Linear filter for updating the turning motor encoder constantly with the absolute value (It doesn't update constantly so we need to smooth it)
      */
-    private LinearFilter turnEncoderSyncFilter = LinearFilter.singlePoleIIR(1, 0.2);
+    // private LinearFilter turnEncoderSyncFilter = LinearFilter.singlePoleIIR(1, 0.2);
 
     /**
      * Turning motor PID controller

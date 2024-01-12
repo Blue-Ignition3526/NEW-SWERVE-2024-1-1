@@ -25,11 +25,37 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public final class Constants {
 
   public final static class Vision {
-    public static final String kCameraName = "OV5647";
+    public static final String kLimelightName = "OV5647";
+    // TODO: change camera names
+    public static final String kFrontCameraName = "Front Camera";
+    public static final String kBackCameraName = "Back Camera";
+    public static final String kLeftCameraName = "Left Camera";
+    public static final String kRightCameraName = "Right Camera";
 
     // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-    public static final Transform3d kRobotToCam = new Transform3d(
+    public static final Transform3d kRobotToLime = new Transform3d(
       new Translation3d(Constants.Swerve.Physical.kTrackWidth / 2, 0.28, Constants.Swerve.Physical.kTrackWidth / 2),
+      new Rotation3d(0, 0, 0)
+    );
+
+    // TODO: change camera transforms
+    public static final Transform3d kRobotToFrontCamera = new Transform3d(
+      new Translation3d(0, 0, 0),
+      new Rotation3d(0, 0, 0)
+    );
+
+    public static final Transform3d kRobotToBackCamera = new Transform3d(
+      new Translation3d(0, 0, 0),
+      new Rotation3d(0, 0, 0)
+    );
+
+    public static final Transform3d kRobotToLeftCamera = new Transform3d(
+      new Translation3d(0, 0, 0),
+      new Rotation3d(0, 0, 0)
+    );
+
+    public static final Transform3d kRobotToRightCamera = new Transform3d(
+      new Translation3d(0, 0, 0),
       new Rotation3d(0, 0, 0)
     );
 
