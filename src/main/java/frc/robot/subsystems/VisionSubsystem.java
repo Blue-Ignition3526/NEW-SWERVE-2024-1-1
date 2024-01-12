@@ -10,9 +10,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import static frc.robot.Constants.Vision.*;
-
 import java.util.Optional;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase { 
@@ -30,7 +28,11 @@ public class VisionSubsystem extends SubsystemBase {
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {
-    this.limeLight = new PhotonCamera(kLimelightName); // instantiate the camera
+    this.limeLight = new PhotonCamera(kLimelightCameraName); // instantiate the camera
+    this.frontCamera = new PhotonCamera(kFrontCameraName); // instantiate the camera
+    this.backCamera = new PhotonCamera(kBackCameraName); // instantiate the camera
+    this.leftCamera = new PhotonCamera(kLeftCameraName); // instantiate the camera
+    this.rightCamera = new PhotonCamera(kRightCameraName); // instantiate the camera
 
     // instantiate the pose estimator on multi-tag mode
     this.photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, limeLight, kRobotToLime);
