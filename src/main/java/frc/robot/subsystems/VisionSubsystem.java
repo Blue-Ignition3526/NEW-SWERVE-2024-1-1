@@ -15,23 +15,31 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class VisionSubsystem extends SubsystemBase {
-  PhotonCamera camera;
+public class VisionSubsystem extends SubsystemBase { 
+  // TODO: add multiple cameras
+  // https://www.chiefdelphi.com/t/multi-camera-setup-and-photonvisions-pose-estimator-seeking-advice/431154
+  PhotonCamera limeLight;
+  
+  PhotonCamera frontCamera;
+  PhotonCamera backCamera;
+  PhotonCamera leftCamera;
+  PhotonCamera rightCamera;
+
   PhotonPoseEstimator photonEstimator;
   private double lastEstTimestamp = 0;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {
-    this.camera = new PhotonCamera(kCameraName); // instantiate the camera
+    this.limeLight = new PhotonCamera(kLimelightName); // instantiate the camera
 
     // instantiate the pose estimator on multi-tag mode
-    this.photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, kRobotToCam);
+    this.photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, limeLight, kRobotToLime);
     this.photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY); // set the fallback strategy to lowest ambiguity
   }
 
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
     var visionEst = photonEstimator.update();
-    double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
+    double latestTimestamp = limeLight.getLatestResult().getTimestampSeconds();
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;
     if (newResult) lastEstTimestamp = latestTimestamp;
     return visionEst;
