@@ -25,12 +25,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public final class Constants {
 
   public final static class Vision {
-    public static final String kLimelightName = "OV5647";
+    public static final String kLimelightCameraName = "OV5647";
     // TODO: change camera names
-    public static final String kFrontCameraName = "Front Camera";
-    public static final String kBackCameraName = "Back Camera";
-    public static final String kLeftCameraName = "Left Camera";
-    public static final String kRightCameraName = "Right Camera";
+    public static final String kFrontCameraName = "Front";
+    public static final String kBackCameraName = "Back";
+    public static final String kLeftCameraName = "Left";
+    public static final String kRightCameraName = "Right";
 
     // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
     public static final Transform3d kRobotToLime = new Transform3d(
