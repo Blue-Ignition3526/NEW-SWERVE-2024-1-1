@@ -29,6 +29,7 @@ public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {
     this.limeLight = new PhotonCamera(kLimelightCameraName); // instantiate the camera
+    
     this.frontCamera = new PhotonCamera(kFrontCameraName); // instantiate the camera
     this.backCamera = new PhotonCamera(kBackCameraName); // instantiate the camera
     this.leftCamera = new PhotonCamera(kLeftCameraName); // instantiate the camera
