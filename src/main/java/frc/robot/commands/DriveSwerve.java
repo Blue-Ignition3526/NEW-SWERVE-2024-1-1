@@ -73,14 +73,14 @@ public class DriveSwerve extends Command {
    * @param rot The rotation speed supplier
    * @param fieldRelative Whether the drive is field relative
    */
-  public DriveSwerve(SwerveDrive m_swerveDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative, Supplier<Boolean> activeTrackSpeaker) {
+  public DriveSwerve(SwerveDrive m_swerveDrive, VisionSubsystem vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative, Supplier<Boolean> activeTrackSpeaker) {
     this.m_swerveDrive = m_swerveDrive;
     this.xSpeed = x;
     this.ySpeed = y;
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
     this.activeTrackSpeaker = activeTrackSpeaker;
-    this.vision = new VisionSubsystem();
+    this.vision = vision;
     addRequirements(m_swerveDrive);
   }
 

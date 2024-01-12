@@ -83,7 +83,7 @@ public class VisionSubsystem extends SubsystemBase {
     PIDController rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
 
     double rotSpeed = rotPID.calculate(tagPose.get().getX(), 0);
-    
+
     rotPID.close();
     return Optional.of(rotSpeed);
   }
