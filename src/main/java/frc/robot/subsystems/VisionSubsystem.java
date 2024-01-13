@@ -61,6 +61,7 @@ public class VisionSubsystem extends SubsystemBase {
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
     var visionEst = photonEstimator.update();
     double latestTimestamp = limeLight.getLatestResult().getTimestampSeconds();
+    Logger.recordOutput("BestTargetAmbiguity", limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;
     if (newResult) lastEstTimestamp = latestTimestamp;
     return visionEst;
@@ -78,7 +79,13 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> targets = limeLight.getLatestResult().getTargets();
     for (PhotonTrackedTarget target : targets) {
       if (target.getFiducialId() == AprilTagID) {
-        return Optional.of(new Pose3d(target.getAlternateCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())));
+        // function getAlternateCameraToTarget() returns a Transform3d, which is a translation and a rotation
+        // function is not working (returns 0,0,0 for translation and for rotation 1, 0, 0, 0)
+        //TODO: find correct function
+        Pose3d tagPose = new Pose3d(target.getAlternateCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
+        Logger.recordOutput("TagPose", tagPose);
+        Logger.recordOutput("CamToTarget", target.getAlternateCameraToTarget());
+        return Optional.of(tagPose);
       }
     }
     return Optional.empty();
@@ -91,7 +98,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
     PIDController rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
 
-    double rotSpeed = rotPID.calculate(tagPose.get().getX(), 0);
+    double rotSpeed = rotPID.calculate(tagPose.get().getY(), 0);
 
     rotPID.close();
     return Optional.of(rotSpeed);

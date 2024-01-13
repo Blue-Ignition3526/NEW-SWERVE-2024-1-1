@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ActiveTrack;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
@@ -87,27 +88,32 @@ public class RobotContainer {
   
   private void configureBindings() {
     // By default drive the swerve drive forever and update with the joystick values
-    m_swerveDrive.setDefaultCommand(
-      new DriveSwerve(
+    m_swerveDrive.setDefaultCommand(new DriveSwerve(
         m_swerveDrive,
-        vision,
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        () -> !m_driverController.rightBumper().getAsBoolean(),
-        () -> !m_driverController.leftBumper().getAsBoolean()
+        () -> !m_driverController.rightBumper().getAsBoolean()
       )
     );
+
+    // Active track when the left trigger is pressed
+    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrack(
+      m_swerveDrive,
+      vision,
+      () -> m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
+      () -> -m_driverController.getRightX(),
+      () -> !m_driverController.rightBumper().getAsBoolean()
+    ));
 
     // When the right trigger is pressed, drive the swerve drive forward
     m_driverController.rightTrigger(0.1).whileTrue(new DriveSwerve(
       m_swerveDrive,
-      vision,
       () -> m_driverController.getRightTriggerAxis(),
       () -> 0.0,
       () -> 0.0,
-      () -> !m_driverController.rightBumper().getAsBoolean(),
-      () -> false
+      () -> !m_driverController.rightBumper().getAsBoolean()
     ));
   }
 
