@@ -104,7 +104,6 @@ public class ActiveTrack extends Command {
       rotSpeed = this.rotSpeed.get();
       tagIsVisible = false;
     }
-    Logger.recordOutput("is target visible", tagIsVisible);
     if(tagIsVisible) Logger.recordOutput("CalculatedRotationalSpeed", rotSpeed);
 
     
