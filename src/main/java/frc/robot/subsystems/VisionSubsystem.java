@@ -79,6 +79,7 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> targets = limeLight.getLatestResult().getTargets();
     for (PhotonTrackedTarget target : targets) {
       if (target.getFiducialId() == AprilTagID) {
+        //? Possibility: base it on screen-space position
         //TODO: test this
         Pose3d tagPose = new Pose3d(target.getBestCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
         Logger.recordOutput("TagPose", tagPose);
@@ -117,5 +118,7 @@ public class VisionSubsystem extends SubsystemBase {
       Logger.recordOutput("VisionRobotPose", pose.get().estimatedPose);
       latestEstimatedPose = pose.get().estimatedPose;
     }
+    if(getAprilTagPose(10).isPresent()) Logger.recordOutput("TagIsVisible", true)
+      else Logger.recordOutput("TagIsVisible", false); // Log pose in periodic
   }
 }
