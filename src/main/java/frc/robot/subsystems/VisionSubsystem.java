@@ -61,7 +61,7 @@ public class VisionSubsystem extends SubsystemBase {
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
     var visionEst = photonEstimator.update();
     double latestTimestamp = limeLight.getLatestResult().getTimestampSeconds();
-    Logger.recordOutput("BestTargetAmbiguity", limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
+    Logger.recordOutput("Vision/BestTargetAmbiguity", limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
     boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;
     if (newResult) lastEstTimestamp = latestTimestamp;
     return visionEst;
@@ -82,8 +82,8 @@ public class VisionSubsystem extends SubsystemBase {
         //? Possibility: base it on screen-space position
         //TODO: test this
         Pose3d tagPose = new Pose3d(target.getBestCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
-        Logger.recordOutput("TagPose", tagPose);
-        Logger.recordOutput("CamToTarget", target.getBestCameraToTarget());
+        Logger.recordOutput("Vision/TagPose", tagPose);
+        Logger.recordOutput("Vision/CamToTarget", target.getBestCameraToTarget());
         return Optional.of(tagPose);
       }
     }
@@ -115,10 +115,10 @@ public class VisionSubsystem extends SubsystemBase {
   public void periodic() {
     Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose();
     if (pose.isPresent()) {
-      Logger.recordOutput("VisionRobotPose", pose.get().estimatedPose);
+      Logger.recordOutput("Vision/VisionRobotPose", pose.get().estimatedPose);
       latestEstimatedPose = pose.get().estimatedPose;
     }
     if(getAprilTagPose(10).isPresent()) Logger.recordOutput("TagIsVisible", true)
-      else Logger.recordOutput("TagIsVisible", false); // Log pose in periodic
+      else Logger.recordOutput("Vision/TagIsVisible", false); // Log pose in periodic
   }
 }
