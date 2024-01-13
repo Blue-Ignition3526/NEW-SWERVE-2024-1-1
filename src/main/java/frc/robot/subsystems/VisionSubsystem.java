@@ -79,12 +79,10 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> targets = limeLight.getLatestResult().getTargets();
     for (PhotonTrackedTarget target : targets) {
       if (target.getFiducialId() == AprilTagID) {
-        // function getAlternateCameraToTarget() returns a Transform3d, which is a translation and a rotation
-        // function is not working (returns 0,0,0 for translation and for rotation 1, 0, 0, 0)
-        //TODO: find correct function
-        Pose3d tagPose = new Pose3d(target.getAlternateCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
+        //TODO: test this
+        Pose3d tagPose = new Pose3d(target.getBestCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
         Logger.recordOutput("TagPose", tagPose);
-        Logger.recordOutput("CamToTarget", target.getAlternateCameraToTarget());
+        Logger.recordOutput("CamToTarget", target.getBestCameraToTarget());
         return Optional.of(tagPose);
       }
     }
