@@ -7,12 +7,15 @@ package frc.robot.commands;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Physical;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.VisionSubsystem;
+
 
 public class ActiveTrack extends Command {
   /**
@@ -101,7 +104,10 @@ public class ActiveTrack extends Command {
       rotSpeed = this.rotSpeed.get();
       tagIsVisible = false;
     }
+    Logger.recordOutput("is target visible", tagIsVisible);
+    if(tagIsVisible) Logger.recordOutput("CalculatedRotationalSpeed", rotSpeed);
 
+    
     // If the speeds are lower than the deadzone
     xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed : 0.0;
     ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed : 0.0;

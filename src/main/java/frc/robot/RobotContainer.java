@@ -101,9 +101,9 @@ public class RobotContainer {
     m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrack(
       m_swerveDrive,
       vision,
-      () -> m_driverController.getLeftTriggerAxis(),
-      () -> 0.0,
-      () -> 0.0,
+      () -> m_driverController.getLeftY(),
+      () -> -m_driverController.getLeftX(),
+      () -> -m_driverController.getRightX(),
       () -> !m_driverController.rightBumper().getAsBoolean()
     ));
 
