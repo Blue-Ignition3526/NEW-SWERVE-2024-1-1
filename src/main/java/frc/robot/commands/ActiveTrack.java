@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Physical;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 
 
 public class ActiveTrack extends Command {
@@ -61,7 +61,7 @@ public class ActiveTrack extends Command {
   /**
    * Vision subsystem
    */
-  VisionSubsystem vision;
+  PoseEstimator poseEstimator;
 
   /**
    * Creates a new DriveSwerve command.
@@ -72,13 +72,13 @@ public class ActiveTrack extends Command {
    * @param rot The rotaion speed if there is no AprilTag found
    * @param fieldRelative Whether the drive is field relative
    */
-  public ActiveTrack(SwerveDrive m_swerveDrive, VisionSubsystem vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative) {
+  public ActiveTrack(SwerveDrive m_swerveDrive, PoseEstimator vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative) {
     this.m_swerveDrive = m_swerveDrive;
     this.xSpeed = x;
     this.ySpeed = y;
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
-    this.vision = vision;
+    this.poseEstimator = vision;
     addRequirements(m_swerveDrive);
   }
 
@@ -96,7 +96,7 @@ public class ActiveTrack extends Command {
 
     boolean tagIsVisible;
     
-    Optional<Double> rotSpeedOpt = vision.calculateRotSpeed(Constants.Vision.AprilTags.kSpeakerTagID);
+    Optional<Double> rotSpeedOpt = poseEstimator.calculateRotSpeed(Constants.Vision.AprilTags.kSpeakerTagID);
     if (rotSpeedOpt.isPresent()){
       rotSpeed = rotSpeedOpt.get();
       tagIsVisible = true;

@@ -16,7 +16,7 @@ import frc.robot.commands.ActiveTrack;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 
 
 /**
@@ -58,12 +58,10 @@ public class RobotContainer {
    */
   SendableChooser<Command> m_autonomousChooser;
 
-  VisionSubsystem vision;
+  PoseEstimator poseEstimator;
 
   public RobotContainer() {
-    // Create a new vision subsytem
-    this.vision = new VisionSubsystem();
-
+    
     // Create all swerve modules and initialize
     this.m_frontLeft = new SwerveModule((Constants.Swerve.Motors.kFrontLeftVars));
     this.m_frontRight = new SwerveModule((Constants.Swerve.Motors.kFrontRightVars));
@@ -72,6 +70,9 @@ public class RobotContainer {
     
     // Create the swerve drive and initialize
     this.m_swerveDrive = new SwerveDrive(this.m_frontLeft, this.m_frontRight, this.m_backLeft, this.m_backRight);
+    
+    // Create a new pose estimator subsytem
+    this.poseEstimator = new PoseEstimator(this.m_swerveDrive);
 
     // Register all commands needed for Autonomous
     NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));
@@ -100,7 +101,7 @@ public class RobotContainer {
     // Active track when the left trigger is pressed
     m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrack(
       m_swerveDrive,
-      vision,
+      poseEstimator,
       () -> m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),
