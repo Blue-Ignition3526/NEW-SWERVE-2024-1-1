@@ -33,6 +33,15 @@ public final class Constants {
     public static final String kBackCameraName = "Back";
     public static final String kLeftCameraName = "Left";
     public static final String kRightCameraName = "Right";
+    
+
+    public static final boolean[] kEnabledCameras = {
+      true, // Limelight
+      false, // Front
+      false, // Back
+      false, // Left
+      false // Right
+    };
 
     // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
     public static final Transform3d kRobotToLime = new Transform3d(

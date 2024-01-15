@@ -16,7 +16,7 @@ import frc.robot.commands.ActiveTrack;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
-import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 
 
 /**
@@ -58,7 +58,7 @@ public class RobotContainer {
    */
   SendableChooser<Command> m_autonomousChooser;
 
-  PoseEstimator poseEstimator;
+  PoseEstimatorSubsystem poseEstimator;
 
   public RobotContainer() {
     
@@ -72,7 +72,7 @@ public class RobotContainer {
     this.m_swerveDrive = new SwerveDrive(this.m_frontLeft, this.m_frontRight, this.m_backLeft, this.m_backRight);
     
     // Create a new pose estimator subsytem
-    this.poseEstimator = new PoseEstimator(this.m_swerveDrive);
+    this.poseEstimator = new PoseEstimatorSubsystem(this.m_swerveDrive);
 
     // Register all commands needed for Autonomous
     NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));

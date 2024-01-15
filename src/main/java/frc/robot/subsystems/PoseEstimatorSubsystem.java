@@ -25,7 +25,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class PoseEstimator extends SubsystemBase { 
+public class PoseEstimatorSubsystem extends SubsystemBase { 
 
   SwerveDrive swerve;
 
@@ -62,8 +62,14 @@ public class PoseEstimator extends SubsystemBase {
   private static int RIGHT_CAMERA = 4;
 
   /** Creates a new VisionSubsystem. */
-  public PoseEstimator(SwerveDrive swerve) {
+  public PoseEstimatorSubsystem(SwerveDrive swerve) {
     this.swerve = swerve;
+
+    Logger.recordOutput("Vision/EnabledCameras/limeLight", kEnabledCameras[0]);
+    Logger.recordOutput("Vision/EnabledCameras/front", kEnabledCameras[1]);
+    Logger.recordOutput("Vision/EnabledCameras/back", kEnabledCameras[2]);
+    Logger.recordOutput("Vision/EnabledCameras/left", kEnabledCameras[3]);
+    Logger.recordOutput("Vision/EnabledCameras/right", kEnabledCameras[4]);
 
     this.limeLight = new PhotonCamera(kLimelightCameraName); // instantiate the camera
     
@@ -173,11 +179,11 @@ public class PoseEstimator extends SubsystemBase {
    */
   public Optional<EstimatedRobotPose>[] getAllEstiamtedPoses() {
     Optional<EstimatedRobotPose>[] allPoses = new Optional[5];
-    allPoses[0] = getEstimatedGlobalPose(LIMELIGHT_CAMERA);
-    allPoses[1] = getEstimatedGlobalPose(FRONT_CAMERA);
-    allPoses[2] = getEstimatedGlobalPose(BACK_CAMERA);
-    allPoses[3] = getEstimatedGlobalPose(LEFT_CAMERA);
-    allPoses[4] = getEstimatedGlobalPose(RIGHT_CAMERA);
+    allPoses[0] = kEnabledCameras[0] ? getEstimatedGlobalPose(LIMELIGHT_CAMERA) : Optional.empty();
+    allPoses[1] = kEnabledCameras[1] ? getEstimatedGlobalPose(FRONT_CAMERA) : Optional.empty();
+    allPoses[2] = kEnabledCameras[2] ? getEstimatedGlobalPose(BACK_CAMERA) : Optional.empty();
+    allPoses[3] = kEnabledCameras[3] ? getEstimatedGlobalPose(LEFT_CAMERA) : Optional.empty();
+    allPoses[4] = kEnabledCameras[4] ? getEstimatedGlobalPose(RIGHT_CAMERA) : Optional.empty();
     return allPoses;
   }
 
@@ -229,17 +235,18 @@ public class PoseEstimator extends SubsystemBase {
   @Override
   public void periodic() {
     Optional<EstimatedRobotPose>[] allPoses = getAllEstiamtedPoses();
-    Logger.recordOutput("Vision/LimeLight/estimatedPose", allPoses[0].get().estimatedPose);
-    Logger.recordOutput("Vision/Front/estimatedPose", allPoses[1].get().estimatedPose);
-    Logger.recordOutput("Vision/Back/estimatedPose", allPoses[2].get().estimatedPose);
-    Logger.recordOutput("Vision/Left/estimatedPose", allPoses[3].get().estimatedPose);
-    Logger.recordOutput("Vision/Right/estimatedPose", allPoses[4].get().estimatedPose);
+    
+    if(kEnabledCameras[0]) Logger.recordOutput("Vision/LimeLight/estimatedPose", allPoses[0].get().estimatedPose);
+    if(kEnabledCameras[1]) Logger.recordOutput("Vision/Front/estimatedPose", allPoses[1].get().estimatedPose);
+    if(kEnabledCameras[2]) Logger.recordOutput("Vision/Back/estimatedPose", allPoses[2].get().estimatedPose);
+    if(kEnabledCameras[3]) Logger.recordOutput("Vision/Left/estimatedPose", allPoses[3].get().estimatedPose);
+    if(kEnabledCameras[4]) Logger.recordOutput("Vision/Right/estimatedPose", allPoses[4].get().estimatedPose);
 
-    swerveEstimator.addVisionMeasurement(allPoses[0].get().estimatedPose.toPose2d(), lime_lastEstTimestamp); // add the latest limeLight pose to the estimator
-    swerveEstimator.addVisionMeasurement(allPoses[1].get().estimatedPose.toPose2d(), front_lastEstTimestamp); // add the latest front pose to the estimator
-    swerveEstimator.addVisionMeasurement(allPoses[2].get().estimatedPose.toPose2d(), back_lastEstTimestamp); // add the latest back pose to the estimator
-    swerveEstimator.addVisionMeasurement(allPoses[3].get().estimatedPose.toPose2d(), left_lastEstTimestamp); // add the latest left pose to the estimator
-    swerveEstimator.addVisionMeasurement(allPoses[4].get().estimatedPose.toPose2d(), right_lastEstTimestamp); // add the latest right pose to the estimator
+    if(kEnabledCameras[0]) swerveEstimator.addVisionMeasurement(allPoses[0].get().estimatedPose.toPose2d(), lime_lastEstTimestamp); // add the latest limeLight pose to the estimator
+    if(kEnabledCameras[1]) swerveEstimator.addVisionMeasurement(allPoses[1].get().estimatedPose.toPose2d(), front_lastEstTimestamp); // add the latest front pose to the estimator
+    if(kEnabledCameras[2]) swerveEstimator.addVisionMeasurement(allPoses[2].get().estimatedPose.toPose2d(), back_lastEstTimestamp); // add the latest back pose to the estimator
+    if(kEnabledCameras[3]) swerveEstimator.addVisionMeasurement(allPoses[3].get().estimatedPose.toPose2d(), left_lastEstTimestamp); // add the latest left pose to the estimator
+    if(kEnabledCameras[4]) swerveEstimator.addVisionMeasurement(allPoses[4].get().estimatedPose.toPose2d(), right_lastEstTimestamp); // add the latest right pose to the estimator
 
     swerveEstimator.update(swerve.getRotation2d(), swerve.getModulePositions()); // update the estimator
 
