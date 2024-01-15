@@ -84,6 +84,7 @@ public final class Constants {
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1); // Experimentally determined
 
     public final static class AprilTags {
+      // Tag #10 is for the amp, we are using the amp as our test, in the future we will use the speaker
       public static final int kSpeakerTagID = 10; // TODO: change tag id
     }
   }

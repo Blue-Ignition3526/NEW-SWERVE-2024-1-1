@@ -29,7 +29,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
   SwerveDrive swerve;
 
-  // TODO: add multiple cameras
   // https://www.chiefdelphi.com/t/multi-camera-setup-and-photonvisions-pose-estimator-seeking-advice/431154
   PhotonCamera limeLight;
 

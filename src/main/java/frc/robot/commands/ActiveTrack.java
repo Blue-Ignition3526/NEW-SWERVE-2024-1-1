@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.Vision.AprilTags;
+
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -96,7 +98,7 @@ public class ActiveTrack extends Command {
 
     boolean tagIsVisible;
     
-    Optional<Double> rotSpeedOpt = poseEstimator.calculateRotSpeed(Constants.Vision.AprilTags.kSpeakerTagID);
+    Optional<Double> rotSpeedOpt = poseEstimator.calculateRotSpeed(AprilTags.kSpeakerTagID);
     if (rotSpeedOpt.isPresent()){
       rotSpeed = rotSpeedOpt.get();
       tagIsVisible = true;
@@ -104,7 +106,7 @@ public class ActiveTrack extends Command {
       rotSpeed = this.rotSpeed.get();
       tagIsVisible = false;
     }
-    if(tagIsVisible) Logger.recordOutput("CalculatedRotationalSpeed", rotSpeed);
+    if(tagIsVisible) Logger.recordOutput("ActiveTrack/CalculatedRotationalSpeed", rotSpeed);
 
     
     // If the speeds are lower than the deadzone
