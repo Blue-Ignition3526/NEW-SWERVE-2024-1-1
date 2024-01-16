@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ActiveTrack;
+import frc.robot.commands.ActiveTrackLimeLight;
 import frc.robot.commands.DriveSwerve;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.SwerveModule;
+import frc.robot.subsystems.LimeLightPose;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 
 
@@ -60,6 +62,8 @@ public class RobotContainer {
 
   PoseEstimatorSubsystem poseEstimator;
 
+  LimeLightPose lime_poseEstimator;
+
   public RobotContainer() {
     
     // Create all swerve modules and initialize
@@ -73,6 +77,7 @@ public class RobotContainer {
     
     // Create a new pose estimator subsytem
     this.poseEstimator = new PoseEstimatorSubsystem(this.m_swerveDrive);
+    this.lime_poseEstimator = new LimeLightPose();
 
     // Register all commands needed for Autonomous
     NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));
@@ -99,9 +104,9 @@ public class RobotContainer {
     );
 
     // Active track when the left trigger is pressed
-    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrack(
+    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrackLimeLight(
       m_swerveDrive,
-      poseEstimator,
+      lime_poseEstimator,
       () -> m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),

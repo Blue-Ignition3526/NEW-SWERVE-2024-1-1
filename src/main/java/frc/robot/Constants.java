@@ -36,7 +36,7 @@ public final class Constants {
     
 
     public static final boolean[] kEnabledCameras = {
-      true, // Limelight
+      false, // Limelight
       false, // Front
       false, // Back
       false, // Left
@@ -67,13 +67,13 @@ public final class Constants {
 
     public static final Transform3d kRobotToRightCamera = new Transform3d(
       new Translation3d(0, 0, 0),
-      new Rotation3d(0, 0, 0)
+      new Rotation3d(0, 0, Math.PI)
     );
 
     public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
-      0.5, // P
+      0.03, // P
       0, // I
-      0  // D
+      0.0005  // D
     };
 
     // The layout of the AprilTags on the field
@@ -85,7 +85,7 @@ public final class Constants {
 
     public final static class AprilTags {
       // Tag #10 is for the amp, we are using the amp as our test, in the future we will use the speaker
-      public static final int kSpeakerTagID = 10; // TODO: change tag id
+      public static final int kSpeakerTagID = 4;
     }
   }
 
@@ -212,6 +212,11 @@ public final class Constants {
         true, // Turning Motor Inverted
         "Back Right" // Name
       };
+    }
+
+    public static final class PoseEstimation {
+      public static final Matrix<N3, N1> kStateStdDevs = VecBuilder.fill(0.5, 0.5, 0.5); // TODO: find the Swerve module standard deviatioins
+      // SwervePoseEstimator wont work without them
     }
   }
 

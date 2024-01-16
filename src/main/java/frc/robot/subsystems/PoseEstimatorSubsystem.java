@@ -17,10 +17,8 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,7 +29,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
   // https://www.chiefdelphi.com/t/multi-camera-setup-and-photonvisions-pose-estimator-seeking-advice/431154
   PhotonCamera limeLight;
-
   PhotonCamera frontCamera;
   PhotonCamera backCamera;
   PhotonCamera leftCamera;
@@ -93,7 +90,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     this.right_photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, rightCamera, kRobotToRightCamera);
     this.right_photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY); // set the fallback strategy to lowest ambiguity
 
-    this.swerveEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.Physical.m_swerveDriveKinematics, this.swerve.getRotation2d(), swerve.getModulePositions(), Constants.Field.kStartPose, null, kMultiTagStdDevs);
+    this.swerveEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.Physical.m_swerveDriveKinematics, this.swerve.getRotation2d(), swerve.getModulePositions(), Constants.Field.kStartPose, Constants.Swerve.PoseEstimation.kStateStdDevs, kMultiTagStdDevs);
   }
 
   /**
@@ -106,8 +103,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
       var visionEst = lime_photonEstimator.update();
       double latestTimestamp = limeLight.getLatestResult().getTimestampSeconds();
 
-      Logger.recordOutput("Vision/LimeLight/BestTargetAmbiguity",
-          limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
+      // Logger.recordOutput("Vision/LimeLight/BestTargetAmbiguity",
+      //     limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
 
       boolean newResult = Math.abs(latestTimestamp - lime_lastEstTimestamp) > 1e-5;
 
@@ -176,15 +173,15 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
    * @return an array of the latest poses {LimeLight, Front, Back, Left, Right}
    * @throws Optional.empty if the AprilTag is not found
    */
-  public Optional<EstimatedRobotPose>[] getAllEstiamtedPoses() {
-    Optional<EstimatedRobotPose>[] allPoses = new Optional[5];
-    allPoses[0] = kEnabledCameras[0] ? getEstimatedGlobalPose(LIMELIGHT_CAMERA) : Optional.empty();
-    allPoses[1] = kEnabledCameras[1] ? getEstimatedGlobalPose(FRONT_CAMERA) : Optional.empty();
-    allPoses[2] = kEnabledCameras[2] ? getEstimatedGlobalPose(BACK_CAMERA) : Optional.empty();
-    allPoses[3] = kEnabledCameras[3] ? getEstimatedGlobalPose(LEFT_CAMERA) : Optional.empty();
-    allPoses[4] = kEnabledCameras[4] ? getEstimatedGlobalPose(RIGHT_CAMERA) : Optional.empty();
-    return allPoses;
-  }
+  // public Optional<EstimatedRobotPose>[] getAllEstiamtedPoses() {
+  //   Optional<EstimatedRobotPose>[] allPoses = new Optional[5];
+  //   allPoses[0] = kEnabledCameras[0] && getEstimatedGlobalPose(LIMELIGHT_CAMERA).isPresent() ? getEstimatedGlobalPose(LIMELIGHT_CAMERA) : Optional.empty();
+  //   // allPoses[1] = kEnabledCameras[1] && getEstimatedGlobalPose(FRONT_CAMERA).isPresent() ? getEstimatedGlobalPose(FRONT_CAMERA) : Optional.empty();
+  //   // allPoses[2] = kEnabledCameras[2] && getEstimatedGlobalPose(BACK_CAMERA).isPresent() ? getEstimatedGlobalPose(BACK_CAMERA) : Optional.empty();
+  //   // allPoses[3] = kEnabledCameras[3] && getEstimatedGlobalPose(LEFT_CAMERA).isPresent() ? getEstimatedGlobalPose(LEFT_CAMERA) : Optional.empty();
+  //   // allPoses[4] = kEnabledCameras[4] && getEstimatedGlobalPose(RIGHT_CAMERA).isPresent() ? getEstimatedGlobalPose(RIGHT_CAMERA) : Optional.empty();
+  //   return allPoses;
+  // }
 
   /**
    * Get the latest estimated pose from the vision system
@@ -192,34 +189,27 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
    * @return The latest pose of the AprilTag in relation to the robot
    * @throws Optional.empty if the AprilTag is not found
    */
-  public Optional<Pose3d> getAprilTagPose(int AprilTagID) {
-    if(!limeLight.getLatestResult().hasTargets()) return Optional.empty();
+  public Optional<Double> getAprilTagOffset(int AprilTagID) {
+    if(!limeLight.getLatestResult().hasTargets() && !rightCamera.getLatestResult().hasTargets()) return Optional.empty();
 
     List<PhotonTrackedTarget> targets = limeLight.getLatestResult().getTargets();
     for (PhotonTrackedTarget target : targets) {
       if (target.getFiducialId() == AprilTagID) {
-        //? Possibility: base it on screen-space position
-        //TODO: test this
-        Pose3d tagPose = new Pose3d(target.getBestCameraToTarget().getTranslation(), new Rotation3d(target.getSkew(), target.getPitch(), target.getYaw())); 
-        Logger.recordOutput("Vision/TagPose", tagPose);
-        Logger.recordOutput("Vision/CamToTarget", target.getBestCameraToTarget());
-        return Optional.of(tagPose);
+        double tagOffset = target.getYaw();
+        Logger.recordOutput("Vision/TagOffset", tagOffset);
+        return Optional.of(tagOffset);
+      }
+    }
+
+    targets = rightCamera.getLatestResult().getTargets();
+    for (PhotonTrackedTarget target : targets) {
+      if (target.getFiducialId() == AprilTagID) {
+        double tagOffset = target.getYaw() + 35; //! change 30 for better number
+        Logger.recordOutput("Vision/TagOffset", tagOffset);
+        return Optional.of(tagOffset);
       }
     }
     return Optional.empty();
-  }
-
-  public Optional<Double> calculateRotSpeed(int AprilTagID) {
-    Optional<Pose3d> tagPose = getAprilTagPose(AprilTagID);
-    if (!tagPose.isPresent()) {
-      return Optional.empty();
-    }
-    PIDController rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
-
-    double rotSpeed = rotPID.calculate(tagPose.get().getY(), 0);
-
-    rotPID.close();
-    return Optional.of(rotSpeed);
   }
 
   /**
@@ -233,25 +223,25 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    Optional<EstimatedRobotPose>[] allPoses = getAllEstiamtedPoses();
+    // Optional<EstimatedRobotPose>[] allPoses = getAllEstiamtedPoses();
     
-    if(kEnabledCameras[0]) Logger.recordOutput("Vision/LimeLight/estimatedPose", allPoses[0].get().estimatedPose);
-    if(kEnabledCameras[1]) Logger.recordOutput("Vision/Front/estimatedPose", allPoses[1].get().estimatedPose);
-    if(kEnabledCameras[2]) Logger.recordOutput("Vision/Back/estimatedPose", allPoses[2].get().estimatedPose);
-    if(kEnabledCameras[3]) Logger.recordOutput("Vision/Left/estimatedPose", allPoses[3].get().estimatedPose);
-    if(kEnabledCameras[4]) Logger.recordOutput("Vision/Right/estimatedPose", allPoses[4].get().estimatedPose);
+    // if(kEnabledCameras[0] && allPoses[0].isPresent()) Logger.recordOutput("Vision/LimeLight/estimatedPose", allPoses[0].get().estimatedPose);
+    // if(kEnabledCameras[1]) Logger.recordOutput("Vision/Front/estimatedPose", allPoses[1].get().estimatedPose);
+    // if(kEnabledCameras[2]) Logger.recordOutput("Vision/Back/estimatedPose", allPoses[2].get().estimatedPose);
+    // if(kEnabledCameras[3]) Logger.recordOutput("Vision/Left/estimatedPose", allPoses[3].get().estimatedPose);
+    // if(kEnabledCameras[4]) Logger.recordOutput("Vision/Right/estimatedPose", allPoses[4].get().estimatedPose);
 
-    if(kEnabledCameras[0]) swerveEstimator.addVisionMeasurement(allPoses[0].get().estimatedPose.toPose2d(), lime_lastEstTimestamp); // add the latest limeLight pose to the estimator
-    if(kEnabledCameras[1]) swerveEstimator.addVisionMeasurement(allPoses[1].get().estimatedPose.toPose2d(), front_lastEstTimestamp); // add the latest front pose to the estimator
-    if(kEnabledCameras[2]) swerveEstimator.addVisionMeasurement(allPoses[2].get().estimatedPose.toPose2d(), back_lastEstTimestamp); // add the latest back pose to the estimator
-    if(kEnabledCameras[3]) swerveEstimator.addVisionMeasurement(allPoses[3].get().estimatedPose.toPose2d(), left_lastEstTimestamp); // add the latest left pose to the estimator
-    if(kEnabledCameras[4]) swerveEstimator.addVisionMeasurement(allPoses[4].get().estimatedPose.toPose2d(), right_lastEstTimestamp); // add the latest right pose to the estimator
+    // if(kEnabledCameras[0]) swerveEstimator.addVisionMeasurement(allPoses[0].get().estimatedPose.toPose2d(), lime_lastEstTimestamp); // add the latest limeLight pose to the estimator
+    // if(kEnabledCameras[1]) swerveEstimator.addVisionMeasurement(allPoses[1].get().estimatedPose.toPose2d(), front_lastEstTimestamp); // add the latest front pose to the estimator
+    // if(kEnabledCameras[2]) swerveEstimator.addVisionMeasurement(allPoses[2].get().estimatedPose.toPose2d(), back_lastEstTimestamp); // add the latest back pose to the estimator
+    // if(kEnabledCameras[3]) swerveEstimator.addVisionMeasurement(allPoses[3].get().estimatedPose.toPose2d(), left_lastEstTimestamp); // add the latest left pose to the estimator
+    // if(kEnabledCameras[4]) swerveEstimator.addVisionMeasurement(allPoses[4].get().estimatedPose.toPose2d(), right_lastEstTimestamp); // add the latest right pose to the estimator
 
-    swerveEstimator.update(swerve.getRotation2d(), swerve.getModulePositions()); // update the estimator
+    // swerveEstimator.update(swerve.getRotation2d(), swerve.getModulePositions()); // update the estimator
 
     Logger.recordOutput("Vision/SwervePoseEstimator/EstimatedPose", swerveEstimator.getEstimatedPosition()); // Log pose in periodic
 
-    if(getAprilTagPose(10).isPresent()) Logger.recordOutput("TagIsVisible", true);
+    if(getAprilTagOffset(AprilTags.kSpeakerTagID).isPresent()) Logger.recordOutput("Vision/LimeLight/TagIsVisible", true);
       else Logger.recordOutput("Vision/LimeLight/TagIsVisible", false); // Log pose in periodic
   }
 }

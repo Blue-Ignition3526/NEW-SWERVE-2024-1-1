@@ -6,11 +6,14 @@ package frc.robot.commands;
 
 import frc.robot.Constants.Vision.AprilTags;
 
+import static frc.robot.Constants.Vision.kActiveTrackPIDValues;
+
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -65,6 +68,9 @@ public class ActiveTrack extends Command {
    */
   PoseEstimatorSubsystem poseEstimator;
 
+
+  PIDController rotPID;
+
   /**
    * Creates a new DriveSwerve command.
    * @param m_swerveDrive The swerve drive subsystem
@@ -81,6 +87,9 @@ public class ActiveTrack extends Command {
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
     this.poseEstimator = vision;
+    
+    this.rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
+
     addRequirements(m_swerveDrive);
   }
 
@@ -98,7 +107,7 @@ public class ActiveTrack extends Command {
 
     boolean tagIsVisible;
     
-    Optional<Double> rotSpeedOpt = poseEstimator.calculateRotSpeed(AprilTags.kSpeakerTagID);
+    Optional<Double> rotSpeedOpt = calculateRotSpeed(AprilTags.kSpeakerTagID);
     if (rotSpeedOpt.isPresent()){
       rotSpeed = rotSpeedOpt.get();
       tagIsVisible = true;
@@ -115,9 +124,9 @@ public class ActiveTrack extends Command {
     if (!tagIsVisible) rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
 
     // Multiply by the top speed
-    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
-    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
-    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond / 2;
+    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
+    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
+    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond;
 
     // Drive the robot
     if (this.fieldRelative.get()) {
@@ -125,6 +134,22 @@ public class ActiveTrack extends Command {
     } else {
       m_swerveDrive.driveRobotRelative(xSpeed, ySpeed, rotSpeed);
     }
+  }
+
+  public Optional<Double> calculateRotSpeed(int AprilTagID) {
+    Optional<Double> tagOffset;
+    try{
+      tagOffset = poseEstimator.getAprilTagOffset(AprilTagID);
+    } catch (Exception e){
+      return Optional.empty();
+    }
+    if (!tagOffset.isPresent()) {
+      return Optional.empty();
+    }
+
+    double rotSpeed = rotPID.calculate(tagOffset.get(), 0);
+
+    return Optional.of(rotSpeed);
   }
 
   // Called once the command ends or is interrupted.
