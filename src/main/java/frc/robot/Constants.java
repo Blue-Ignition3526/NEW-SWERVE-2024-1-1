@@ -73,7 +73,7 @@ public final class Constants {
     public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
       0.03, // P
       0, // I
-      0.0005  // D
+      0  // D
     };
 
     // The layout of the AprilTags on the field
@@ -142,14 +142,14 @@ public final class Constants {
         //public static final double kMaxSpeedMetersPerSecond = 5.0; // Maxima Velocidad en Metros por Segundo
         public static final double kMaxAngularSpeedRadiansPerSecond = 2.0 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kMaxAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion
+        public static final double kMaxAccelerationUnitsPerSecond = 5.0; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = Math.PI / 4.0; // Maxima Aceleracion Angular
 
         public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 4.0; // Maxima Velocidad en Metros por Segundo
         public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 4.0; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kTeleopMaxAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion
-        public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion Angular
+        public static final double kTeleopMaxAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion
+        public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion Angular
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(kTeleopMaxAngularSpeedRadiansPerSecond, kTeleopMaxAngularAccelerationUnitsPerSecond);
 
