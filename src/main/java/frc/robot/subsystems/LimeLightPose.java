@@ -4,7 +4,11 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.Vision.kLimelightCameraName;
+
 import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -114,5 +118,12 @@ public class LimeLightPose extends SubsystemBase {
     targetX = table.getEntry("tx").getDouble(0.0);
     targetY = table.getEntry("ty").getDouble(0.0);
     targetID = (int) table.getEntry("tid").getDouble(0.0);
+
+    Logger.recordOutput("LimeLight/isConected", isConnected);
+
+    Logger.recordOutput("LimeLight/tv", targetVisible);
+    Logger.recordOutput("LimeLight/tx", targetX);
+    Logger.recordOutput("LimeLight/ty", targetY);
+    Logger.recordOutput("LimeLight/tid", targetID);
   }
 }
