@@ -16,13 +16,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ActiveTrack;
+import frc.robot.commands.ActiveTrackLimeLight;
 import frc.robot.commands.DriveSwerve;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import frc.robot.subsystems.SwerveDrive.SwerveDrive;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
+import frc.robot.subsystems.LimeLightPose;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 
@@ -65,13 +69,12 @@ public class RobotContainer {
    */
   SendableChooser<Command> m_autonomousChooser;
 
-  VisionSubsystem vision;
+  PoseEstimatorSubsystem poseEstimator;
+
+  LimeLightPose lime_poseEstimator;
 
   public RobotContainer() {
     if (Robot.isReal()) {
-      // Create a new vision subsytem
-      this.vision = new VisionSubsystem();
-
       // Create all swerve modules and initialize
       this.m_frontLeft = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontLeftVars));
       this.m_frontRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontRightVars));
@@ -120,9 +123,9 @@ public class RobotContainer {
     );
 
     // Active track when the left trigger is pressed
-    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrack(
+    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrackLimeLight(
       m_swerveDrive,
-      vision,
+      lime_poseEstimator,
       () -> m_driverController.getLeftY(),
       () -> -m_driverController.getLeftX(),
       () -> -m_driverController.getRightX(),

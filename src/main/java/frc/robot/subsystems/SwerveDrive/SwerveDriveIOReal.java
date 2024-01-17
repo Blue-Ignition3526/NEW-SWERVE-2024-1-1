@@ -145,6 +145,19 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
     }
 
     /**
+     * Get the current swerve module position for each module
+     * @return SwerveModulePosition[]
+     */
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        };
+    }
+
+    /**
      * Tries to update the odometry (if it fails, it will print the error and still return the odometry)
      * @return SwerveDriveOdometry
      */

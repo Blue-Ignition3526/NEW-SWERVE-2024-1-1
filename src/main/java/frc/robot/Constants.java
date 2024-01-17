@@ -13,6 +13,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -31,6 +33,15 @@ public final class Constants {
     public static final String kBackCameraName = "Back";
     public static final String kLeftCameraName = "Left";
     public static final String kRightCameraName = "Right";
+    
+
+    public static final boolean[] kEnabledCameras = {
+      false, // Limelight
+      false, // Front
+      false, // Back
+      false, // Left
+      false // Right
+    };
 
     // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
     public static final Transform3d kRobotToLime = new Transform3d(
@@ -56,13 +67,13 @@ public final class Constants {
 
     public static final Transform3d kRobotToRightCamera = new Transform3d(
       new Translation3d(0, 0, 0),
-      new Rotation3d(0, 0, 0)
+      new Rotation3d(0, 0, Math.PI)
     );
 
     public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
-      0.5, // P
+      0.03, // P
       0, // I
-      0  // D
+      0.0005  // D
     };
 
     // The layout of the AprilTags on the field
@@ -73,8 +84,19 @@ public final class Constants {
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1); // Experimentally determined
 
     public final static class AprilTags {
-      public static final int kSpeakerTagID = 10; // TODO: change tag id
+      // Tag #10 is for the amp, we are using the amp as our test, in the future we will use the speaker
+      public static final int kSpeakerTagID = 4;
     }
+  }
+
+  public static final class Field {
+    public static final double kFieldLength = 15.98;
+    public static final double kFieldWidth = 8.21;
+
+    public static final Pose2d kRedStartPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0)); //! TODO: change start pose
+    public static final Pose2d kBlueStartPose = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+
+    public static final Pose2d kStartPose = kRedStartPose;
   }
 
   public final static class Swerve {
@@ -190,6 +212,11 @@ public final class Constants {
         true, // Turning Motor Inverted
         "Back Right" // Name
       };
+    }
+
+    public static final class PoseEstimation {
+      public static final Matrix<N3, N1> kStateStdDevs = VecBuilder.fill(0.5, 0.5, 0.5); // TODO: find the Swerve module standard deviatioins
+      // SwervePoseEstimator wont work without them
     }
   }
 

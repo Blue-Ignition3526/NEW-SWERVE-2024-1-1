@@ -4,16 +4,22 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.Vision.AprilTags;
+
+import static frc.robot.Constants.Vision.kActiveTrackPIDValues;
+
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Physical;
 import frc.robot.subsystems.SwerveDrive.SwerveDrive;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 
@@ -61,7 +67,10 @@ public class ActiveTrack extends Command {
   /**
    * Vision subsystem
    */
-  VisionSubsystem vision;
+  PoseEstimatorSubsystem poseEstimator;
+
+
+  PIDController rotPID;
 
   /**
    * Creates a new DriveSwerve command.
@@ -72,13 +81,16 @@ public class ActiveTrack extends Command {
    * @param rot The rotaion speed if there is no AprilTag found
    * @param fieldRelative Whether the drive is field relative
    */
-  public ActiveTrack(SwerveDrive m_swerveDrive, VisionSubsystem vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative) {
+  public ActiveTrack(SwerveDrive m_swerveDrive, PoseEstimatorSubsystem vision, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative) {
     this.m_swerveDrive = m_swerveDrive;
     this.xSpeed = x;
     this.ySpeed = y;
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
-    this.vision = vision;
+    this.poseEstimator = vision;
+    
+    this.rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
+
     addRequirements(m_swerveDrive);
   }
 
@@ -96,7 +108,7 @@ public class ActiveTrack extends Command {
 
     boolean tagIsVisible;
     
-    Optional<Double> rotSpeedOpt = vision.calculateRotSpeed(Constants.Vision.AprilTags.kSpeakerTagID);
+    Optional<Double> rotSpeedOpt = calculateRotSpeed(AprilTags.kSpeakerTagID);
     if (rotSpeedOpt.isPresent()){
       rotSpeed = rotSpeedOpt.get();
       tagIsVisible = true;
@@ -104,8 +116,7 @@ public class ActiveTrack extends Command {
       rotSpeed = this.rotSpeed.get();
       tagIsVisible = false;
     }
-    Logger.recordOutput("is target visible", tagIsVisible);
-    if(tagIsVisible) Logger.recordOutput("CalculatedRotationalSpeed", rotSpeed);
+    if(tagIsVisible) Logger.recordOutput("ActiveTrack/CalculatedRotationalSpeed", rotSpeed);
 
     
     // If the speeds are lower than the deadzone
@@ -114,9 +125,9 @@ public class ActiveTrack extends Command {
     if (!tagIsVisible) rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
 
     // Multiply by the top speed
-    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
-    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 2;
-    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond / 2;
+    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
+    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
+    rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond;
 
     // Drive the robot
     if (this.fieldRelative.get()) {
@@ -124,6 +135,22 @@ public class ActiveTrack extends Command {
     } else {
       m_swerveDrive.driveRobotRelative(xSpeed, ySpeed, rotSpeed);
     }
+  }
+
+  public Optional<Double> calculateRotSpeed(int AprilTagID) {
+    Optional<Double> tagOffset;
+    try{
+      tagOffset = poseEstimator.getAprilTagOffset(AprilTagID);
+    } catch (Exception e){
+      return Optional.empty();
+    }
+    if (!tagOffset.isPresent()) {
+      return Optional.empty();
+    }
+
+    double rotSpeed = rotPID.calculate(tagOffset.get(), 0);
+
+    return Optional.of(rotSpeed);
   }
 
   // Called once the command ends or is interrupted.
