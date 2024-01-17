@@ -239,6 +239,15 @@ public class SwerveDriveIOSim implements SwerveDriveIO {
         this.drive(speeds);
     }
 
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+        };
+    }
+
     public void periodic() {
         Logger.recordOutput("SwerveDrive/RobotHeadingRad", this.getRotation2d().getRadians());
         Logger.recordOutput("SwerveDrive/RobotHeadingDeg", this.getRotation2d().getDegrees());

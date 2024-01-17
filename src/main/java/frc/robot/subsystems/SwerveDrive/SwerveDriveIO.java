@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public interface SwerveDriveIO {
@@ -32,6 +33,7 @@ public interface SwerveDriveIO {
 
     public Rotation2d getRotation2d();
     public SwerveModuleState[] getModuleStates();
+    public SwerveModulePosition[] getModulePositions();
     public SwerveDriveOdometry getOdometry();
     public Pose2d getPose();
     public void resetPosition(Pose2d pose);
