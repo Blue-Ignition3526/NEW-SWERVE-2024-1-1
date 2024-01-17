@@ -26,6 +26,28 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public final class Constants {
 
+  public static final class Intake {
+    public static final double kMechanismWidth = 20;
+    public static final double kMechanismheight = 40;
+
+    public static final int intakeMotor = 31;
+    public static final int rollerMotor = 32;
+
+    public static final double kIntakeMotorEncoder_RotationToDegrees = (1 / 16) * 360; // Conversion Rotaciones a Radianes
+
+    public static final class IntakeMotorPIDConstants {
+      public static final double kP = 0.1;
+      public static final double kI = 0.0;
+      public static final double kD = 0.0;
+    }
+
+    public static final class RollerMotorPIDConstants {
+      public static final double kP = 0.1;
+      public static final double kI = 0.0;
+      public static final double kD = 0.0;
+    }
+  }
+
   public final static class Vision {
     public static final String kLimelightCameraName = "OV5647";
     // TODO: change camera names
@@ -121,6 +143,7 @@ public final class Constants {
       }
 
       private static final PIDController m_turningPIDController = new PIDController(Constants.Swerve.Module.PIDParameters.m_kP, Constants.Swerve.Module.PIDParameters.m_kI, Constants.Swerve.Module.PIDParameters.m_kD);
+      
       public static final PIDController getTurningPIDController() {
         m_turningPIDController.enableContinuousInput(0, 2 * Math.PI);
         return m_turningPIDController;

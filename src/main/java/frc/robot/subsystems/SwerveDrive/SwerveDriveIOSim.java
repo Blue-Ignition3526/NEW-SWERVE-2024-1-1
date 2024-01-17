@@ -166,15 +166,6 @@ public class SwerveDriveIOSim implements SwerveDriveIO {
         this.heading += m_chassisSpeeds.omegaRadiansPerSecond * (Timer.getFPGATimestamp() - this.speedsUpdated);
     }
 
-    public void setM_chassisSpeeds(ChassisSpeeds speeds) {
-        this.m_chassisSpeeds = speeds;
-        this.speedsUpdated = Timer.getFPGATimestamp();
-    }
-
-    public ChassisSpeeds getM_chassisSpeeds() {
-        return this.m_chassisSpeeds;
-    }
-
     public Rotation2d getRotation2d() {
         // Calculate the new robot heading angle using the angle theta provided 
         return new Rotation2d(this.heading);
@@ -194,6 +185,7 @@ public class SwerveDriveIOSim implements SwerveDriveIO {
      * @param speeds The speeds to drive at (Check `ChassisSpeeds` for more info)
      */
     public void drive(ChassisSpeeds speeds) {
+        this.speedsUpdated = Timer.getFPGATimestamp();
         this.m_chassisSpeeds = speeds;
         SwerveModuleState[] m_moduleStates = Constants.Swerve.Physical.m_swerveDriveKinematics.toSwerveModuleStates(speeds);
         this.setModuleStates(m_moduleStates);

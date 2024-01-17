@@ -82,7 +82,6 @@ public class DriveSwerve extends Command {
     double ySpeed = this.ySpeed.get();
     double rotSpeed = this.rotSpeed.get();
 
-
     // If the speeds are lower than the deadzone
     xSpeed = Math.abs(xSpeed) > Constants.Operator.kDeadzone ? xSpeed : 0.0;
     ySpeed = Math.abs(ySpeed) > Constants.Operator.kDeadzone ? ySpeed : 0.0;

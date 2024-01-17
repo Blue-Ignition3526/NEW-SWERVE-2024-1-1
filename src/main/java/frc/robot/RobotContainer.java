@@ -9,16 +9,14 @@ import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ActiveTrack;
 import frc.robot.commands.ActiveTrackLimeLight;
 import frc.robot.commands.DriveSwerve;
-import edu.wpi.first.math.estimator.PoseEstimator;
+import frc.robot.commands.IntakeOut;
 import frc.robot.subsystems.SwerveDrive.SwerveDrive;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
@@ -27,7 +25,8 @@ import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.LimeLightPose;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIOReal;
 
 
 /**
@@ -65,6 +64,11 @@ public class RobotContainer {
   SwerveDrive m_swerveDrive;
 
   /**
+   * Intake
+   */
+  Intake m_intake;
+
+  /**
    * Autonomous Command Chooser
    */
   SendableChooser<Command> m_autonomousChooser;
@@ -83,6 +87,8 @@ public class RobotContainer {
 
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
+
+      this.m_intake = new Intake(new IntakeIOReal(30, 31));
 
       Logger.recordMetadata("Robot", "Real");
     } else {
@@ -140,6 +146,8 @@ public class RobotContainer {
       () -> 0.0,
       () -> !m_driverController.rightBumper().getAsBoolean()
     ));
+
+    m_driverController.y().whileTrue(new IntakeOut(m_intake));
   }
 
   /**
