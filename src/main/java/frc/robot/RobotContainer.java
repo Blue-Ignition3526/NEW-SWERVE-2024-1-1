@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,8 +17,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ActiveTrack;
 import frc.robot.commands.DriveSwerve;
-import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.SwerveModule;
+import frc.robot.subsystems.SwerveDrive.SwerveDrive;
+import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
+import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
+import frc.robot.subsystems.SwerveModule.SwerveModule;
+import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
+import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.VisionSubsystem;
 
 
@@ -61,17 +68,32 @@ public class RobotContainer {
   VisionSubsystem vision;
 
   public RobotContainer() {
-    // Create a new vision subsytem
-    this.vision = new VisionSubsystem();
+    if (Robot.isReal()) {
+      // Create a new vision subsytem
+      this.vision = new VisionSubsystem();
 
-    // Create all swerve modules and initialize
-    this.m_frontLeft = new SwerveModule((Constants.Swerve.Motors.kFrontLeftVars));
-    this.m_frontRight = new SwerveModule((Constants.Swerve.Motors.kFrontRightVars));
-    this.m_backLeft = new SwerveModule((Constants.Swerve.Motors.kBackLeftVars));
-    this.m_backRight = new SwerveModule((Constants.Swerve.Motors.kBackRightVars));
-    
-    // Create the swerve drive and initialize
-    this.m_swerveDrive = new SwerveDrive(this.m_frontLeft, this.m_frontRight, this.m_backLeft, this.m_backRight);
+      // Create all swerve modules and initialize
+      this.m_frontLeft = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontLeftVars));
+      this.m_frontRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontRightVars));
+      this.m_backLeft = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kBackLeftVars));
+      this.m_backRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kBackRightVars));
+
+      // Create the swerve drive and initialize
+      this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
+
+      Logger.recordMetadata("Robot", "Real");
+    } else {
+      // Create all swerve modules and initialize
+      this.m_frontLeft = new SwerveModule(new SwerveModuleIOSim(Constants.Swerve.Motors.kFrontLeftVars));
+      this.m_frontRight = new SwerveModule(new SwerveModuleIOSim(Constants.Swerve.Motors.kFrontRightVars));
+      this.m_backLeft = new SwerveModule(new SwerveModuleIOSim(Constants.Swerve.Motors.kBackLeftVars));
+      this.m_backRight = new SwerveModule(new SwerveModuleIOSim(Constants.Swerve.Motors.kBackRightVars));
+
+      // Create the swerve drive and initialize
+      this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOSim(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
+
+      Logger.recordMetadata("Robot", "Sim");
+    }
 
     // Register all commands needed for Autonomous
     NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));
@@ -80,7 +102,7 @@ public class RobotContainer {
     // Create a sendable chooser for the autonomous routines
     SendableChooser<Command> m_autonomousChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Autonomous Command", m_autonomousChooser);
-
+    
     // Configure the controller bindings
     configureBindings();
   }

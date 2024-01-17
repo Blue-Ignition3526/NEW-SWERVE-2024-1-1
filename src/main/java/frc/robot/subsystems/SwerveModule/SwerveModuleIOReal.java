@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.SwerveModule;
 
 import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -15,10 +15,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class SwerveModule extends SubsystemBase {
+public class SwerveModuleIOReal implements SwerveModuleIO {
     /**
      * Drive motor controller
      */
@@ -85,7 +84,7 @@ public class SwerveModule extends SubsystemBase {
      * Swerve module constructor
      * @param Arr Configuration array
      */
-    public SwerveModule(Object[] Arr) {
+    public SwerveModuleIOReal(Object[] Arr) {
         // Get variables from options and add them to the class
         this.m_turningEncoderOffsetRad = (double)Arr[0]; 
         this.m_turningAbsoluteEncoderInverted = (boolean)Arr[1]; 
@@ -241,6 +240,13 @@ public class SwerveModule extends SubsystemBase {
     }
 
     @Override
+    public void updateInputs(SwerveModuleIOInputs inputs) {
+        // Set the angle and speed of the swerve module
+        inputs.angle = getAbsoluteEncoderRad();
+        inputs.speed = m_driveMotorEncoder.getVelocity();
+        inputs.distance = m_driveMotorEncoder.getPosition();
+    }
+
     public void periodic() {
         // Current FPGA time
         double currentTime = Timer.getFPGATimestamp();

@@ -20,8 +20,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import static frc.robot.Constants.Vision.*;
-import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.SwerveDrive;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -15,12 +15,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.I2C;
 import frc.robot.Constants;
+import frc.robot.subsystems.SwerveModule.SwerveModule;
 
-public class SwerveDrive extends SubsystemBase{
+public class SwerveDriveIOReal implements SwerveDriveIO {
     /**
      * Front Left Swerve Module
      */
@@ -68,7 +68,7 @@ public class SwerveDrive extends SubsystemBase{
      * @param m_backLeft Back Left Swerve Module
      * @param m_backRight Back Right Swerve Module
      */
-    public SwerveDrive(SwerveModule m_frontLeft, SwerveModule m_frontRight, SwerveModule m_backLeft, SwerveModule m_backRight) {
+    public SwerveDriveIOReal(SwerveModule m_frontLeft, SwerveModule m_frontRight, SwerveModule m_backLeft, SwerveModule m_backRight) {
         this.m_frontLeft = m_frontLeft;
         this.m_frontRight = m_frontRight;
         this.m_backLeft = m_backLeft;
@@ -95,8 +95,13 @@ public class SwerveDrive extends SubsystemBase{
                 m_backRight.getPosition()
             }
         );
+    }
 
-        // Configure the autonomous builder
+    /**
+     * Configure the auto builder
+     * @param swerveDrive The swerve drive subsystem
+     */
+    public void configureAutoBuilder(SwerveDrive swerveDrive) {
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetPosition,
@@ -113,7 +118,7 @@ public class SwerveDrive extends SubsystemBase{
                 if (DriverStation.getAlliance().isPresent()) return DriverStation.getAlliance().get() == Alliance.Red;
                 return false;
             },
-            this
+            swerveDrive
         );
     }
 
@@ -265,7 +270,30 @@ public class SwerveDrive extends SubsystemBase{
         this.drive(speeds);
     }
 
-    @Override
+    /**
+     * Update the inputs of the robot (gyro angle, swerve module states, etc.)
+     * @param inputs The inputs to update (Check `SwerveDriveIOInputs` for more info)
+     */
+    public void updateInputs(SwerveDriveIOInputs inputs) {
+        inputs.frontLeftAngle = this.m_frontLeft.getState().angle.getRadians();
+        inputs.frontLeftSpeed = this.m_frontLeft.getState().speedMetersPerSecond;
+
+        inputs.frontRightAngle = this.m_frontRight.getState().angle.getRadians();
+        inputs.frontRightSpeed = this.m_frontRight.getState().speedMetersPerSecond;
+
+        inputs.backLeftAngle = this.m_backLeft.getState().angle.getRadians();
+        inputs.backLeftSpeed = this.m_backLeft.getState().speedMetersPerSecond;
+
+        inputs.backRightAngle = this.m_backRight.getState().angle.getRadians();
+        inputs.backRightSpeed = this.m_backRight.getState().speedMetersPerSecond;
+
+        inputs.gyroAngle = getRotation2d().getDegrees();
+
+        inputs.xSpeed = m_chassisSpeeds.vxMetersPerSecond;
+        inputs.ySpeed = m_chassisSpeeds.vyMetersPerSecond;
+        inputs.rotSpeed = m_chassisSpeeds.omegaRadiansPerSecond;
+    }
+
     public void periodic() {
         Logger.recordOutput("SwerveDrive/RobotHeadingRad", this.getRotation2d().getRadians());
         Logger.recordOutput("SwerveDrive/RobotHeadingDeg", this.getRotation2d().getDegrees());
