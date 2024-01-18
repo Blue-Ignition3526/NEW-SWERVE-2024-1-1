@@ -67,6 +67,7 @@ public class IntakeIOReal implements IntakeIO {
     }
     
     public void setRollerRpm(double speedRpm) {
+        this.rollerMotor.setInverted(speedRpm < 0);
         this.targetRollerRpm = speedRpm;
     }
 

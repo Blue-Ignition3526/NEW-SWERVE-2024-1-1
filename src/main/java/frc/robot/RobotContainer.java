@@ -12,18 +12,16 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ActiveTrackLimeLight;
 import frc.robot.commands.DriveSwerve;
-import frc.robot.commands.IntakeOut;
+import frc.robot.commands.Intake.IntakeIn;
+import frc.robot.commands.Intake.IntakeOut;
 import frc.robot.subsystems.SwerveDrive.SwerveDrive;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
-import frc.robot.subsystems.LimeLightPose;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOReal;
@@ -75,8 +73,6 @@ public class RobotContainer {
 
   PoseEstimatorSubsystem poseEstimator;
 
-  LimeLightPose lime_poseEstimator;
-
   public RobotContainer() {
     if (Robot.isReal()) {
       // Create all swerve modules and initialize
@@ -105,8 +101,8 @@ public class RobotContainer {
     }
 
     // Register all commands needed for Autonomous
-    NamedCommands.registerCommand("IntakeIn", new WaitCommand(1));
-    NamedCommands.registerCommand("IntakeOut", new WaitCommand(1));
+    NamedCommands.registerCommand("IntakeIn", new IntakeIn(m_intake));
+    NamedCommands.registerCommand("IntakeOut", new IntakeOut(m_intake));
 
     // Create a sendable chooser for the autonomous routines
     SendableChooser<Command> m_autonomousChooser = AutoBuilder.buildAutoChooser();
@@ -124,30 +120,13 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        () -> !m_driverController.rightBumper().getAsBoolean()
+        () -> !m_driverController.rightBumper().getAsBoolean(),
+        () -> m_driverController.leftTrigger(0.1).getAsBoolean()
       )
     );
-
-    // Active track when the left trigger is pressed
-    m_driverController.leftTrigger(0.1).whileTrue(new ActiveTrackLimeLight(
-      m_swerveDrive,
-      lime_poseEstimator,
-      () -> m_driverController.getLeftY(),
-      () -> -m_driverController.getLeftX(),
-      () -> -m_driverController.getRightX(),
-      () -> !m_driverController.rightBumper().getAsBoolean()
-    ));
-
-    // When the right trigger is pressed, drive the swerve drive forward
-    m_driverController.rightTrigger(0.1).whileTrue(new DriveSwerve(
-      m_swerveDrive,
-      () -> m_driverController.getRightTriggerAxis(),
-      () -> 0.0,
-      () -> 0.0,
-      () -> !m_driverController.rightBumper().getAsBoolean()
-    ));
-
-    m_driverController.y().whileTrue(new IntakeOut(m_intake));
+    
+    m_driverController.x().whileTrue(new IntakeIn(m_intake));
+    m_driverController.rightTrigger(0.1).whileTrue(new IntakeOut(m_intake));
   }
 
   /**
