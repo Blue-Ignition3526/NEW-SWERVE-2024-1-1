@@ -188,7 +188,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         // The speed is given in meters per second, so we need to convert from [-1, 1]
         // To do that we divide it by the max speed of robot
         // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
-        m_driveMotorPIDController.setP(0.15);
+        m_driveMotorPIDController.setP(0.175);
         m_driveMotorPIDController.setI(0.0000000005);
         m_driveMotorPIDController.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
         
@@ -276,6 +276,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         if (currentTime - lastMotorEncoderUpdateTime >= 0.5) {
             syncTurnMotorEncoderSmooth();
             lastMotorEncoderUpdateTime = currentTime;
+            System.out.println(getName() + " Swerve Module Real Rotation Updated");
         }
     }
 }

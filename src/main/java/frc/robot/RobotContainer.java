@@ -25,6 +25,7 @@ import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOReal;
+import frc.robot.subsystems.Intake.IntakeIOSim;
 
 
 /**
@@ -84,6 +85,7 @@ public class RobotContainer {
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
 
+      // Create a new intake
       this.m_intake = new Intake(new IntakeIOReal(30, 31));
 
       Logger.recordMetadata("Robot", "Real");
@@ -97,6 +99,9 @@ public class RobotContainer {
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOSim(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
 
+      // Create a new intake
+      this.m_intake = new Intake(new IntakeIOSim());
+
       Logger.recordMetadata("Robot", "Sim");
     }
 
@@ -105,8 +110,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeOut", new IntakeOut(m_intake));
 
     // Create a sendable chooser for the autonomous routines
-    SendableChooser<Command> m_autonomousChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Autonomous Command", m_autonomousChooser);
+    this.m_autonomousChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Autonomous Command", this.m_autonomousChooser);
     
     // Configure the controller bindings
     configureBindings();
@@ -120,7 +125,7 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        () -> !m_driverController.rightBumper().getAsBoolean(),
+        () -> m_driverController.rightBumper().getAsBoolean(),
         () -> m_driverController.leftTrigger(0.1).getAsBoolean()
       )
     );

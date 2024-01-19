@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/ActiveTrackPID": "PIDController",
       "/SmartDashboard/Autonomous Command": "String Chooser"
     }
   },

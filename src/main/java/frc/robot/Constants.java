@@ -35,11 +35,11 @@ public final class Constants {
 
     public static final double kIntakeMotorEncoder_RotationToDegrees = (1 / 16) * 360; // Conversion Rotaciones a grados
 
-    public static final double kRollerInSpeedRpm = 5;
-    public static final double kRollerOutSpeedRpm = -5;
+    public static final double kRollerInSpeedRpm = 20;
+    public static final double kRollerOutSpeedRpm = -20;
 
     public static final class IntakeMotorPIDConstants {
-      public static final double kP = 0.001;
+      public static final double kP = 0.01;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
     }
@@ -100,7 +100,7 @@ public final class Constants {
     public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
       0.075, // P
       0, // I
-      0.001  // D
+      0.005  // D
     };
 
     // The layout of the AprilTags on the field
@@ -166,17 +166,17 @@ public final class Constants {
         public static final Translation2d m_backLeftLocation = new Translation2d(-kWheelBase/2, -kTrackWidth/2); // Back Left Wheel Location
         public static final Translation2d m_backRightLocation = new Translation2d(-kWheelBase/2, kTrackWidth/2); // Back Right Wheel Location
 
-        public static final double kMaxSpeedMetersPerSecond = 15.0; // Maxima Velocidad en Metros por Segundo
+        public static final double kMaxSpeedMetersPerSecond = 20.0; // Maxima Velocidad en Metros por Segundo
         //public static final double kMaxSpeedMetersPerSecond = 5.0; // Maxima Velocidad en Metros por Segundo
-        public static final double kMaxAngularSpeedRadiansPerSecond = 3.0 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
+        public static final double kMaxAngularSpeedRadiansPerSecond = 5.0 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kMaxAccelerationUnitsPerSecond = 7.5; // Maxima Aceleracion
+        public static final double kMaxAccelerationUnitsPerSecond = 10; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = Math.PI; // Maxima Aceleracion Angular
 
         public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 4.0; // Maxima Velocidad en Metros por Segundo
         public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 4.0; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kTeleopMaxAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion
+        public static final double kTeleopMaxAccelerationUnitsPerSecond = 2.0; // Maxima Aceleracion
         public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion Angular
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(kTeleopMaxAngularSpeedRadiansPerSecond, kTeleopMaxAngularAccelerationUnitsPerSecond);

@@ -25,7 +25,7 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
 
-  public PowerDistribution pdp = new PowerDistribution(1, ModuleType.kCTRE); // Enables power distribution logging
+  // public PowerDistribution pdp = new PowerDistribution(1, ModuleType.kCTRE); // Enables power distribution logging
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -38,7 +38,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
 
     // Reset PDP
-    pdp.clearStickyFaults();;
+    // pdp.clearStickyFaults();
 
     // AdvantageKit Config
     if (isReal()) {
