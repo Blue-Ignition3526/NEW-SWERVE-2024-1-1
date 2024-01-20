@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Constants {
 
@@ -97,11 +98,10 @@ public final class Constants {
       new Rotation3d(0, 0, Math.PI)
     );
 
-    public static final double[] kActiveTrackPIDValues = { // TODO: tune PID values
-      0.075, // P
-      0, // I
-      0.005  // D
-    };
+    public static final PIDController m_activeTrackPIDController = new PIDController(0.05, 0, 0.005);
+    {
+      SmartDashboard.putData("SwerveDrive/ActiveTrackPIDController", m_activeTrackPIDController);
+    }
 
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
@@ -141,17 +141,10 @@ public final class Constants {
 
       public static final double kGlobalTurningOffsetRad = Math.toRadians(180);
 
-      public static final class PIDParameters {
-        public static double m_kP = 0.1;
-        public static double m_kI = 0.0;
-        public static double m_kD = 0.0;
-      }
-
-      private static final PIDController m_turningPIDController = new PIDController(Constants.Swerve.Module.PIDParameters.m_kP, Constants.Swerve.Module.PIDParameters.m_kI, Constants.Swerve.Module.PIDParameters.m_kD);
-      
-      public static final PIDController getTurningPIDController() {
+      public static final PIDController m_turningPIDController = new PIDController(0.1, 0, 0);
+      {
         m_turningPIDController.enableContinuousInput(0, 2 * Math.PI);
-        return m_turningPIDController;
+        SmartDashboard.putData("SwerveDrive/TurningPIDController", m_turningPIDController);
       }
     }
 
@@ -170,8 +163,8 @@ public final class Constants {
         //public static final double kMaxSpeedMetersPerSecond = 5.0; // Maxima Velocidad en Metros por Segundo
         public static final double kMaxAngularSpeedRadiansPerSecond = 5.0 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kMaxAccelerationUnitsPerSecond = 10; // Maxima Aceleracion
-        public static final double kMaxAngularAccelerationUnitsPerSecond = Math.PI; // Maxima Aceleracion Angular
+        public static final double kMaxAccelerationUnitsPerSecond = 15; // Maxima Aceleracion
+        public static final double kMaxAngularAccelerationUnitsPerSecond = 1.5 * Math.PI; // Maxima Aceleracion Angular
 
         public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 4.0; // Maxima Velocidad en Metros por Segundo
         public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 4.0; // Maxima Velocidad Angular en Radianes por Segundo

@@ -113,9 +113,6 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         this.m_turningMotorEncoder.setPositionConversionFactor(Constants.Swerve.Module.kTurningEncoder_RotationToRadian); 
         this.m_turningMotorEncoder.setVelocityConversionFactor(Constants.Swerve.Module.kTurningEncoder_RPMToRadianPerSecond);
 
-        // PID Continuous input
-        Constants.Swerve.Module.getTurningPIDController().enableContinuousInput(0, Math.PI * 2);
-
         // Set module name
         m_name = (String) Arr[7];
 
@@ -201,7 +198,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         // The speed is not given to us, rather the angle we want to turn to
         // So we need to calculate the difference between the current angle and the target angle
         // Then we use the PID controller to calculate the speed we need to turn at
-        m_turningMotor.set(Constants.Swerve.Module.getTurningPIDController().calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
+        m_turningMotor.set(Constants.Swerve.Module.m_turningPIDController.calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
     }
 
     /**

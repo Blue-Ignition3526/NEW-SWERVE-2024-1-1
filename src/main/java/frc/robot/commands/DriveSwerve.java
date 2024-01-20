@@ -4,16 +4,11 @@
 
 package frc.robot.commands;
 
-import static frc.robot.Constants.Vision.kActiveTrackPIDValues;
 import static frc.robot.Constants.Vision.kLimelightName;
 
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve.Physical;
@@ -66,8 +61,6 @@ public class DriveSwerve extends Command {
    */
   SlewRateLimiter rotLimiter = new SlewRateLimiter(Constants.Swerve.Physical.kTeleopMaxAngularAccelerationUnitsPerSecond);
 
-  PIDController rotPID;
-
   /**
    * Creates a new DriveSwerve command.
    * @param m_swerveDrive The swerve drive subsystem
@@ -84,10 +77,6 @@ public class DriveSwerve extends Command {
     this.rotSpeed = rot;
     this.fieldRelative = fieldRelative;
     this.trackAprilTag = trackAprilTag;
-
-    this.rotPID = new PIDController(kActiveTrackPIDValues[0], kActiveTrackPIDValues[1], kActiveTrackPIDValues[2]);
-
-    SmartDashboard.putData("ActiveTrackPID", this.rotPID);
 
     addRequirements(m_swerveDrive);
   }
@@ -114,7 +103,7 @@ public class DriveSwerve extends Command {
     ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
     rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond;
 
-    if (trackAprilTag.get()) rotSpeed = rotPID.calculate(LimelightHelpers.getTX(kLimelightName), 0.0);
+    if (trackAprilTag.get()) rotSpeed = Constants.Vision.m_activeTrackPIDController.calculate(LimelightHelpers.getTX(kLimelightName), 0.0);
 
     // Drive the robot
     if (this.fieldRelative.get()) {
