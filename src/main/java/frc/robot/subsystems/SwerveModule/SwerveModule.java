@@ -33,6 +33,10 @@ public class SwerveModule extends SubsystemBase {
     return io.getState();
   }
 
+  public SwerveModuleState getRealState() {
+    return io.getRealState();
+  }
+
   public SwerveModulePosition getPosition() {
     return io.getPosition();
   }

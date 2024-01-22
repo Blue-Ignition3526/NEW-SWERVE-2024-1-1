@@ -17,6 +17,7 @@ public interface SwerveModuleIO {
     public void setState(SwerveModuleState state);
     public String getName();
     public SwerveModuleState getState();
+    public SwerveModuleState getRealState();
     public SwerveModulePosition getPosition();
     public void updateInputs(SwerveModuleIOInputs inputs);
     public default void periodic() {}

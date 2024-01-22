@@ -49,6 +49,11 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         return state;
     }
 
+    // Returns the current state
+    public SwerveModuleState getRealState() {
+        return state;
+    }
+
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(this.distance, state.angle);
     }

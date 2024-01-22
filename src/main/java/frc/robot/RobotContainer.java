@@ -23,6 +23,8 @@ import frc.robot.subsystems.SwerveModule.SwerveModule;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.Gyro.Gyro;
+import frc.robot.subsystems.Gyro.GyroIOPigeon;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOReal;
 import frc.robot.subsystems.Intake.IntakeIOSim;
@@ -83,7 +85,10 @@ public class RobotContainer {
       this.m_backRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kBackRightVars));
 
       // Create the swerve drive and initialize
-      this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
+      this.m_swerveDrive = new SwerveDrive(
+        new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight,
+        new Gyro(new GyroIOPigeon(5)))
+      );
 
       // Create a new intake
       this.m_intake = new Intake(new IntakeIOReal(30, 31));

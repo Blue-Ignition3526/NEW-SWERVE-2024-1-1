@@ -1,12 +1,9 @@
 package frc.robot.subsystems.SwerveDrive;
 
 import org.littletonrobotics.junction.Logger;
-
-import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -16,8 +13,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.I2C;
 import frc.robot.Constants;
+import frc.robot.subsystems.Gyro.Gyro;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
 
 public class SwerveDriveIOReal implements SwerveDriveIO {
@@ -42,9 +39,9 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
     private final SwerveModule m_backRight;
 
     /**
-     * NavX Gyro (Over MXP I2C)
+     * Gyroscope
      */
-    private final AHRS m_gyro = new AHRS(I2C.Port.kMXP);
+    private final Gyro m_gyro;
 
     /**
      * Odometry class for tracking robot pose on the field
@@ -67,22 +64,16 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
      * @param m_frontRight Front Right Swerve Module
      * @param m_backLeft Back Left Swerve Module
      * @param m_backRight Back Right Swerve Module
+     * @param m_gyro Gyroscope
      */
-    public SwerveDriveIOReal(SwerveModule m_frontLeft, SwerveModule m_frontRight, SwerveModule m_backLeft, SwerveModule m_backRight) {
+    public SwerveDriveIOReal(SwerveModule m_frontLeft, SwerveModule m_frontRight, SwerveModule m_backLeft, SwerveModule m_backRight, Gyro m_gyro) {
         this.m_frontLeft = m_frontLeft;
         this.m_frontRight = m_frontRight;
         this.m_backLeft = m_backLeft;
         this.m_backRight = m_backRight;
 
-        // Reset the gyro to 0 degrees
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                m_gyro.reset();
-                Thread.sleep(1000);
-                m_gyro.zeroYaw();
-            } catch (Exception e) {}
-        }).start();
+        this.m_gyro = m_gyro;
+        this.m_gyro.reset();
 
         // Update the odometry with the initial positions of the swerve modules
         this.m_odometry = new SwerveDriveOdometry(
@@ -128,7 +119,7 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
      * @return Rotation2d
      */
     public Rotation2d getRotation2d() {
-        return new Rotation2d(Math.toRadians(this.m_gyro.getAngle() % 360));
+        return new Rotation2d(Math.toRadians(this.m_gyro.getYaw() % 360));
     }
 
     /**
@@ -154,6 +145,19 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
             m_frontRight.getPosition(),
             m_backLeft.getPosition(),
             m_backRight.getPosition()
+        };
+    }
+
+    /**
+     * Get the current REAL swerve module state for each module
+     * @return SwerveModulePosition[]
+     */
+    public SwerveModuleState[] getRealModuleStates() {
+        return new SwerveModuleState[]{
+            m_frontLeft.getRealState(),
+            m_frontRight.getRealState(),
+            m_backLeft.getRealState(),
+            m_backRight.getRealState(),
         };
     }
 
@@ -322,9 +326,10 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
         Logger.recordOutput("SwerveDrive/RobotSpeedsY", this.getRobotRelativeChassisSpeeds().vyMetersPerSecond);
         Logger.recordOutput("SwerveDrive/RobotSpeedsRot", this.getRobotRelativeChassisSpeeds().omegaRadiansPerSecond);
 
-        Logger.recordOutput("SwerveDrive/XSpeedMpS", m_gyro.getVelocityX());
-        Logger.recordOutput("SwerveDrive/YSpeedMpS", m_gyro.getVelocityY());
+        Logger.recordOutput("SwerveDrive/XAccel", m_gyro.getAccelerationX());
+        Logger.recordOutput("SwerveDrive/YAccel", m_gyro.getAccelerationY());
 
         Logger.recordOutput("SwerveDrive/SwerveModuleStates", this.getModuleStates());
+        Logger.recordOutput("SwerveDrive/RealSwerveModuleStates", this.getRealModuleStates());
     }
 }

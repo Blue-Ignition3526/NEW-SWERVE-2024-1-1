@@ -30,6 +30,10 @@ public class SwerveDrive extends SubsystemBase {
     return io.getModuleStates();
   }
 
+  public SwerveModuleState[] getRealModuleStates() {
+    return io.getRealModuleStates();
+  }
+
   public SwerveDriveOdometry getOdometry() {
     return io.getOdometry();
   }

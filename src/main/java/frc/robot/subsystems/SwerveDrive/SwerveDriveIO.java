@@ -33,6 +33,7 @@ public interface SwerveDriveIO {
 
     public Rotation2d getRotation2d();
     public SwerveModuleState[] getModuleStates();
+    public SwerveModuleState[] getRealModuleStates();
     public SwerveModulePosition[] getModulePositions();
     public SwerveDriveOdometry getOdometry();
     public Pose2d getPose();

@@ -1,9 +1,6 @@
 package frc.robot.subsystems.Intake;
 
 import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.CANSparkBase.ControlType;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class IntakeIOSim implements IntakeIO {

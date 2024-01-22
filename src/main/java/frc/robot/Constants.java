@@ -13,6 +13,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -141,10 +142,15 @@ public final class Constants {
 
       public static final double kGlobalTurningOffsetRad = Math.toRadians(180);
 
-      public static final PIDController m_turningPIDController = new PIDController(0.1, 0, 0);
+      public static final ProfiledPIDController kTurningPIDController = new ProfiledPIDController(
+        0.1,
+        0,
+        0,
+        new TrapezoidProfile.Constraints(0.5, 0.075)
+      );
       {
-        m_turningPIDController.enableContinuousInput(0, 2 * Math.PI);
-        SmartDashboard.putData("SwerveDrive/TurningPIDController", m_turningPIDController);
+        kTurningPIDController.enableContinuousInput(0, 2 * Math.PI);
+        SmartDashboard.putData("SwerveDrive/TurningPIDController", kTurningPIDController);
       }
     }
 
@@ -159,9 +165,9 @@ public final class Constants {
         public static final Translation2d m_backLeftLocation = new Translation2d(-kWheelBase/2, -kTrackWidth/2); // Back Left Wheel Location
         public static final Translation2d m_backRightLocation = new Translation2d(-kWheelBase/2, kTrackWidth/2); // Back Right Wheel Location
 
-        public static final double kMaxSpeedMetersPerSecond = 20.0; // Maxima Velocidad en Metros por Segundo
+        public static final double kMaxSpeedMetersPerSecond = 15.0; // Maxima Velocidad en Metros por Segundo
         //public static final double kMaxSpeedMetersPerSecond = 5.0; // Maxima Velocidad en Metros por Segundo
-        public static final double kMaxAngularSpeedRadiansPerSecond = 5.0 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
+        public static final double kMaxAngularSpeedRadiansPerSecond = 3 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
 
         public static final double kMaxAccelerationUnitsPerSecond = 15; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = 1.5 * Math.PI; // Maxima Aceleracion Angular
@@ -194,7 +200,7 @@ public final class Constants {
     public final static class Motors {
       //! OFFSETS ARE CALCULATED AS THE -(THE DIFFERENCE OF SWERVE ABSOLUTE ENCODER "0" and ABSOLUTE ENCODER 0 ---IN RADIANS---)
       public static final Object[] kFrontLeftVars = { 
-        Math.toRadians(-107.841796875), // Offset
+        Math.toRadians(-74.970703125), // Offset
         true, // Inverted
         11, // Absolute Encoder ID
         22, // Drive Motor ID

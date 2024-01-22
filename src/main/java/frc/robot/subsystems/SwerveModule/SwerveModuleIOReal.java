@@ -26,7 +26,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
     /**
      * Turning motor controller
      */
-    private final CANSparkMax m_turningMotor;
+    private final CANSparkMax m_turnMotor;
 
 
     /**
@@ -71,9 +71,14 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
     // private LinearFilter turnEncoderSyncFilter = LinearFilter.singlePoleIIR(1, 0.2);
 
     /**
-     * Turning motor PID controller
+     * Drive motor PID controller
      */
     private SparkPIDController m_driveMotorPIDController;
+
+    /**
+     * Turn motor PID controller
+     */
+    private SparkPIDController m_turnMotorPIDController;
 
     /**
      * Last timestamp when the motor encoders updated
@@ -91,13 +96,13 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         this.m_turningAbsoluteEncoder = new CANcoder((int)Arr[2]);
 
         this.m_driveMotor = new CANSparkMax((int)Arr[3], MotorType.kBrushless); 
-        this.m_turningMotor = new CANSparkMax((int)Arr[4], MotorType.kBrushless);
+        this.m_turnMotor = new CANSparkMax((int)Arr[4], MotorType.kBrushless);
 
         this.m_driveMotor.setInverted((boolean)Arr[5]); 
-        this.m_turningMotor.setInverted((boolean)Arr[6]); 
+        this.m_turnMotor.setInverted((boolean)Arr[6]); 
 
         this.m_driveMotorEncoder = m_driveMotor.getEncoder();
-        this.m_turningMotorEncoder = m_turningMotor.getEncoder();
+        this.m_turningMotorEncoder = m_turnMotor.getEncoder();
 
         this.m_turningAbsoluteEncoder.getConfigurator().apply(
             new MagnetSensorConfigs()
@@ -105,7 +110,16 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
             .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
         );
 
+        // this.m_turningAbsoluteEncoder.optimizeBusUtilization(2);
+        // this.m_turnMotor.setCANTimeout(2000);
+
         this.m_driveMotorPIDController = m_driveMotor.getPIDController();
+        this.m_driveMotorPIDController.setP(0.175);
+        this.m_driveMotorPIDController.setI(0.0000000005);
+
+        // this.m_turnMotorPIDController = m_turnMotor.getPIDController();
+        // this.m_turnMotorPIDController.setP(0.12);
+        // this.m_turnMotorPIDController.setFF(0.075);
 
         // Configure encoder conversions
         this.m_driveMotorEncoder.setPositionConversionFactor(Constants.Swerve.Module.kDriveEncoder_RotationToMeter); 
@@ -140,6 +154,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
     // Return the absolute encoder position in radians
     public double getAbsoluteEncoderRad() {
         return ((m_turningAbsoluteEncoder.getPosition().refresh().getValue() * 2 * Math.PI) % (2 * Math.PI)) * (m_turningAbsoluteEncoderInverted ? -1.0 : 1.0);
+        // return ((m_turningAbsoluteEncoder.getPosition().refresh().getValue() * 2 * Math.PI) % (2 * Math.PI)) * (m_turningAbsoluteEncoderInverted ? -1.0 : 1.0);
     }
 
     /**
@@ -153,6 +168,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         
         // Return the motor encoder position in radians
         return this.m_turningMotorEncoder.getPosition() % (2 * Math.PI);
+        // return this.m_turningMotorEncoder.getPosition();
     }
 
     /**
@@ -160,7 +176,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
      */
     public void stop() {
         m_driveMotor.set(0);
-        m_turningMotor.set(0);
+        m_turnMotor.set(0);
     }
 
     /**
@@ -185,8 +201,6 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         // The speed is given in meters per second, so we need to convert from [-1, 1]
         // To do that we divide it by the max speed of robot
         // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
-        m_driveMotorPIDController.setP(0.175);
-        m_driveMotorPIDController.setI(0.0000000005);
         m_driveMotorPIDController.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
         
         // Show the applied speed percentage on the dashboard
@@ -194,11 +208,13 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         Logger.recordOutput("SwerveDrive/" + m_name + "/TargetSpeedPMpS", optimizedState.speedMetersPerSecond);
         Logger.recordOutput("SwerveDrive/" + m_name + "/RealSpeedPMpS", m_driveMotorEncoder.getVelocity());
     
+        // ! PAST IMPLEMENTATION (NOT ACCURATE)
         // Set the turning motor speed
         // The speed is not given to us, rather the angle we want to turn to
         // So we need to calculate the difference between the current angle and the target angle
         // Then we use the PID controller to calculate the speed we need to turn at
-        m_turningMotor.set(Constants.Swerve.Module.m_turningPIDController.calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
+        m_turnMotor.set(Constants.Swerve.Module.kTurningPIDController.calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
+        // m_turnMotorPIDController.setReference(optimizedState.angle.getRadians(), ControlType.kPosition);
     }
 
     /**
@@ -214,6 +230,14 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
      */
     public SwerveModuleState getState() {
         return state;
+    }
+
+    /**
+     * Returns the real wheel state
+     * @return SwerveModuleState
+     */
+    public SwerveModuleState getRealState() {
+        return new SwerveModuleState(m_driveMotorEncoder.getVelocity(), new Rotation2d(getTurningEncoderPositionRad()));
     }
 
     /**

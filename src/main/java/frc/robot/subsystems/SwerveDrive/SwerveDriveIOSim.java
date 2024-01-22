@@ -137,6 +137,15 @@ public class SwerveDriveIOSim implements SwerveDriveIO {
         m_backRight.setState(desiredStates[3]);
     }
 
+    public SwerveModuleState[] getRealModuleStates() {
+        return new SwerveModuleState[]{
+            m_frontLeft.getRealState(),
+            m_frontRight.getRealState(),
+            m_backLeft.getRealState(),
+            m_backRight.getRealState()
+        };
+    }
+
     public void stopModules() {
         m_frontLeft.stop();
         m_frontRight.stop();
