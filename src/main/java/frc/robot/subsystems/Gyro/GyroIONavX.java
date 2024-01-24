@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.I2C;
 public class GyroIONavX implements GyroIO {
     public AHRS gyro;
 
-    public GyroIONavX(int canID) {
+    public GyroIONavX() {
         gyro = new AHRS(I2C.Port.kMXP);
     }
 

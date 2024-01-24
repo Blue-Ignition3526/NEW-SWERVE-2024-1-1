@@ -22,8 +22,10 @@ import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
+import frc.robot.subsystems.SwerveModule.SwerveModuleIOSparkMaxPID;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Gyro.Gyro;
+import frc.robot.subsystems.Gyro.GyroIONavX;
 import frc.robot.subsystems.Gyro.GyroIOPigeon;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOReal;
@@ -79,15 +81,15 @@ public class RobotContainer {
   public RobotContainer() {
     if (Robot.isReal()) {
       // Create all swerve modules and initialize
-      this.m_frontLeft = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontLeftVars));
-      this.m_frontRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kFrontRightVars));
-      this.m_backLeft = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kBackLeftVars));
-      this.m_backRight = new SwerveModule(new SwerveModuleIOReal(Constants.Swerve.Motors.kBackRightVars));
+      this.m_frontLeft = new SwerveModule(new SwerveModuleIOSparkMaxPID(Constants.Swerve.Motors.kFrontLeftVars));
+      this.m_frontRight = new SwerveModule(new SwerveModuleIOSparkMaxPID(Constants.Swerve.Motors.kFrontRightVars));
+      this.m_backLeft = new SwerveModule(new SwerveModuleIOSparkMaxPID(Constants.Swerve.Motors.kBackLeftVars));
+      this.m_backRight = new SwerveModule(new SwerveModuleIOSparkMaxPID(Constants.Swerve.Motors.kBackRightVars));
 
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(
         new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight,
-        new Gyro(new GyroIOPigeon(5)))
+        new Gyro(new GyroIONavX()))
       );
 
       // Create a new intake

@@ -142,11 +142,10 @@ public final class Constants {
 
       public static final double kGlobalTurningOffsetRad = Math.toRadians(180);
 
-      public static final ProfiledPIDController kTurningPIDController = new ProfiledPIDController(
+      public static final PIDController kTurningPIDController = new PIDController(
         0.1,
         0,
-        0,
-        new TrapezoidProfile.Constraints(0.5, 0.075)
+        0
       );
       {
         kTurningPIDController.enableContinuousInput(0, 2 * Math.PI);
@@ -200,12 +199,12 @@ public final class Constants {
     public final static class Motors {
       //! OFFSETS ARE CALCULATED AS THE -(THE DIFFERENCE OF SWERVE ABSOLUTE ENCODER "0" and ABSOLUTE ENCODER 0 ---IN RADIANS---)
       public static final Object[] kFrontLeftVars = { 
-        Math.toRadians(-74.970703125), // Offset
+        Math.toRadians(72.686), // Offset
         true, // Inverted
         11, // Absolute Encoder ID
         22, // Drive Motor ID
         21, // Turning Motor ID
-        false, // Drive Motor Inverted
+        true, // Drive Motor Inverted
         true, // Turning Motor Inverted
         "Front Left" // Name
       };
