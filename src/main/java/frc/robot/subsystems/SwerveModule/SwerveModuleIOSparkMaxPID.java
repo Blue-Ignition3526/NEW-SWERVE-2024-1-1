@@ -201,10 +201,11 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         // ! PAST IMPLEMENTATION (NOT ACCURATE)
         // m_turningMotor.set(Constants.Swerve.Module.kTurningPIDController.calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
 
-        // No soluciono el problema que habia pero creo que lo mejoro (Cuando la diferencia es mucha no lo deja (Lerp chafo))
-        //? Sumar 2 PI en vez del encoder
-        m_turningMotorPIDController.setReference(Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2? getTurningEncoderPositionRad() + state.angle.getRadians() : state.angle.getRadians(), ControlType.kPosition);
-        Logger.recordOutput("SwerveDrive/" + m_name + "/PIDAngle", Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2 ? getTurningEncoderPositionRad() + state.angle.getRadians() : state.angle.getRadians());
+        // TODO: test this
+        // Ternary checks if the difference between the current position and the desired position is more than 90º if it is adds 360º
+        // This is done to combat the problem where when surpassing 360º the desired state would give < 360º so the wheel would not take the shortest path
+        m_turningMotorPIDController.setReference(Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2 ? Math.PI * 2 + state.angle.getRadians() : state.angle.getRadians(), ControlType.kPosition);
+        Logger.recordOutput("SwerveDrive/" + m_name + "/PIDAngle", Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2 ? Math.PI * 2 + state.angle.getRadians() : state.angle.getRadians());
     }
 
     /**
