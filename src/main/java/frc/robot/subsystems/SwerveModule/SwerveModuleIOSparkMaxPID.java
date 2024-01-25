@@ -120,6 +120,9 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         // Turn motor PID Controller
         this.m_turningMotorPIDController = m_turningMotor.getPIDController();
         this.m_turningMotorPIDController.setP(0.5);
+        this.m_turningMotorPIDController.setPositionPIDWrappingMinInput(0);
+        this.m_turningMotorPIDController.setPositionPIDWrappingMaxInput(2 * Math.PI);
+        this.m_turningMotorPIDController.setPositionPIDWrappingEnabled(true);
 
         resetMotorEncoders();
     }
@@ -159,8 +162,9 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
      * @return double
      */
     public double getTurningEncoderPositionRad() {
+        this.m_turningMotorEncoder.setPositionConversionFactor(Constants.Swerve.Module.kTurningEncoder_RotationToRadian); 
         // Return the motor encoder position in radians
-        return this.m_turningMotorEncoder.getPosition();
+        return this.m_turningMotorEncoder.getPosition() % (Math.PI * 2);
     }
 
     /**
@@ -183,7 +187,7 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         }
     
         // Optimize the state
-        state = SwerveModuleState.optimize(state, new Rotation2d(getTurningEncoderPositionRad()));
+        state = SwerveModuleState.optimize(state, Rotation2d.fromRadians(getTurningEncoderPositionRad()));
 
         // Set the state
         this.state = state;
@@ -201,11 +205,9 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         // ! PAST IMPLEMENTATION (NOT ACCURATE)
         // m_turningMotor.set(Constants.Swerve.Module.kTurningPIDController.calculate(getTurningEncoderPositionRad(), optimizedState.angle.getRadians()));
 
-        // TODO: test this
         // Ternary checks if the difference between the current position and the desired position is more than 90º if it is adds 360º
         // This is done to combat the problem where when surpassing 360º the desired state would give < 360º so the wheel would not take the shortest path
-        m_turningMotorPIDController.setReference(Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2 ? Math.PI * 2 + state.angle.getRadians() : state.angle.getRadians(), ControlType.kPosition);
-        Logger.recordOutput("SwerveDrive/" + m_name + "/PIDAngle", Math.abs(state.angle.getRadians() - getTurningEncoderPositionRad()) > Math.PI / 2 ? Math.PI * 2 + state.angle.getRadians() : state.angle.getRadians());
+        m_turningMotorPIDController.setReference(state.angle.getRadians(), ControlType.kPosition);
     }
 
     /**
@@ -268,10 +270,10 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         Logger.recordOutput("SwerveDrive/" + m_name + "/State", state);
         Logger.recordOutput("SwerveDrive/" + m_name + "/Position", getPosition());
 
-        /*if (resetAngleTimer.get() > 0.5) {
+        if (resetAngleTimer.get() > 0.5) {
             resetTurningMotorEncoder();
             resetAngleTimer.reset();
             resetAngleTimer.start();
-        }*/
+        }
     }
 }

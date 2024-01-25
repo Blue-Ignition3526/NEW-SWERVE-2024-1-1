@@ -141,16 +141,6 @@ public final class Constants {
       public static final double kTurningEncoder_RPMToRadianPerSecond = kTurningEncoder_RotationToRadian / 60.0; // Conversion RPM a Radianes por Segundo
 
       public static final double kGlobalTurningOffsetRad = Math.toRadians(180);
-
-      public static final PIDController kTurningPIDController = new PIDController(
-        0.1,
-        0,
-        0
-      );
-      {
-        kTurningPIDController.enableContinuousInput(0, 2 * Math.PI);
-        SmartDashboard.putData("SwerveDrive/TurningPIDController", kTurningPIDController);
-      }
     }
 
     public final static class Physical {
@@ -171,8 +161,8 @@ public final class Constants {
         public static final double kMaxAccelerationUnitsPerSecond = 15; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = 1.5 * Math.PI; // Maxima Aceleracion Angular
 
-        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 4.0; // Maxima Velocidad en Metros por Segundo
-        public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 4.0; // Maxima Velocidad Angular en Radianes por Segundo
+        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 2; // Maxima Velocidad en Metros por Segundo
+        public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 2.0; // Maxima Velocidad Angular en Radianes por Segundo
 
         public static final double kTeleopMaxAccelerationUnitsPerSecond = 2.0; // Maxima Aceleracion
         public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion Angular

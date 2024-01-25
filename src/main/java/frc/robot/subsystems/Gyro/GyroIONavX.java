@@ -15,11 +15,11 @@ public class GyroIONavX implements GyroIO {
     }
 
     public double getYaw() {
-        return gyro.getPitch();
+        return gyro.getYaw() % 360;
     }
 
     public double getRoll() {
-        return gyro.getPitch();
+        return gyro.getRoll();
     }
 
     public double getPitchVelocity() {

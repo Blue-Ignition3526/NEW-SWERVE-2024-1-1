@@ -20,7 +20,6 @@ import frc.robot.subsystems.SwerveDrive.SwerveDrive;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
-import frc.robot.subsystems.SwerveModule.SwerveModuleIOReal;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSparkMaxPID;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
@@ -132,7 +131,7 @@ public class RobotContainer {
         () -> m_driverController.getLeftY(),
         () -> -m_driverController.getLeftX(),
         () -> -m_driverController.getRightX(),
-        () -> m_driverController.rightBumper().getAsBoolean(),
+        true,
         () -> m_driverController.leftTrigger(0.1).getAsBoolean()
       )
     );

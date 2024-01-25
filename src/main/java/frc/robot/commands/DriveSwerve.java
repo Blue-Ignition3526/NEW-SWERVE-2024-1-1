@@ -39,7 +39,7 @@ public class DriveSwerve extends Command {
   /**
    * Whether the drive is field relative
    */
-  Supplier<Boolean> fieldRelative;
+  Boolean fieldRelative;
 
   /**
    * Whether to track an april tag
@@ -70,12 +70,12 @@ public class DriveSwerve extends Command {
    * @param fieldRelative Whether the drive is field relative
    * @param trackAprilTag Whether to track the april tag 
    */
-  public DriveSwerve(SwerveDrive m_swerveDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Supplier<Boolean> fieldRelative, Supplier<Boolean> trackAprilTag) {
+  public DriveSwerve(SwerveDrive m_swerveDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> rot, Boolean fieldRelative, Supplier<Boolean> trackAprilTag) {
     this.m_swerveDrive = m_swerveDrive;
     this.xSpeed = x;
     this.ySpeed = y;
     this.rotSpeed = rot;
-    this.fieldRelative = fieldRelative;
+    this.fieldRelative = true;
     this.trackAprilTag = trackAprilTag;
 
     addRequirements(m_swerveDrive);
@@ -106,7 +106,7 @@ public class DriveSwerve extends Command {
     if (trackAprilTag.get()) rotSpeed = Constants.Vision.m_activeTrackPIDController.calculate(LimelightHelpers.getTX(kLimelightName), 0.0);
 
     // Drive the robot
-    if (this.fieldRelative.get()) {
+    if (this.fieldRelative) {
       m_swerveDrive.driveFieldRelative(xSpeed, ySpeed, rotSpeed);
     } else {
       m_swerveDrive.driveRobotRelative(xSpeed, ySpeed, rotSpeed);
