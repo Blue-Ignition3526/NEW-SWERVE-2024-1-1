@@ -161,11 +161,11 @@ public final class Constants {
         public static final double kMaxAccelerationUnitsPerSecond = 15; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = 1.5 * Math.PI; // Maxima Aceleracion Angular
 
-        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 2; // Maxima Velocidad en Metros por Segundo
+        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 1.5; // Maxima Velocidad en Metros por Segundo
         public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 2.0; // Maxima Velocidad Angular en Radianes por Segundo
 
-        public static final double kTeleopMaxAccelerationUnitsPerSecond = 2.0; // Maxima Aceleracion
-        public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 1.0; // Maxima Aceleracion Angular
+        public static final double kTeleopMaxAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion
+        public static final double kTeleopMaxAngularAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion Angular
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(kTeleopMaxAngularSpeedRadiansPerSecond, kTeleopMaxAngularAccelerationUnitsPerSecond);
 

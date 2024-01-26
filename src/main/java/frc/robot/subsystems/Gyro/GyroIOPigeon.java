@@ -10,15 +10,15 @@ public class GyroIOPigeon implements GyroIO {
     }
 
     public double getPitch() {
-        return gyro.getPitch().refresh().getValue();
+        return -gyro.getPitch().refresh().getValue();
     }
 
     public double getYaw() {
-        return gyro.getPitch().refresh().getValue();
+        return -gyro.getYaw().refresh().getValue();
     }
 
     public double getRoll() {
-        return gyro.getPitch().refresh().getValue();
+        return -gyro.getRoll().refresh().getValue();
     }
 
     public double getPitchVelocity() {

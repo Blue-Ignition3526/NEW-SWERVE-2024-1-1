@@ -88,8 +88,10 @@ public class RobotContainer {
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(
         new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight,
-        new Gyro(new GyroIONavX()))
+        new Gyro(new GyroIOPigeon(34)))
       );
+
+      this.poseEstimator = new PoseEstimatorSubsystem(m_swerveDrive);
 
       // Create a new intake
       this.m_intake = new Intake(new IntakeIOReal(30, 31));

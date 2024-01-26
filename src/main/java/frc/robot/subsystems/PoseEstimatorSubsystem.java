@@ -41,6 +41,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     swerveEstimator.update(swerve.getRotation2d(), swerve.getModulePositions()); // update the estimator
 
-    Logger.recordOutput("Vision/SwervePoseEstimator/EstimatedPose", swerveEstimator.getEstimatedPosition()); // Log pose in periodic
+    Logger.recordOutput("SwervePoseEstimator/LimeLightPose", LimelightHelpers.getBotPose2d(kLimelightName));
+    Logger.recordOutput("SwervePoseEstimator/EstimatedPose", swerveEstimator.getEstimatedPosition()); // Log pose in periodic
   }
 }

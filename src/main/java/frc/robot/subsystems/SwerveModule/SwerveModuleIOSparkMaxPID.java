@@ -198,6 +198,8 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
         m_driveMotorPIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
 
+        Logger.recordOutput("SwerveDrive/" + getName() + "AppliedSpeed", m_driveMotor.getAppliedOutput());
+
         // Set the turning motor speed
         // The speed is not given to us, rather the angle we want to turn to
         // So we need to calculate the difference between the current angle and the target angle
