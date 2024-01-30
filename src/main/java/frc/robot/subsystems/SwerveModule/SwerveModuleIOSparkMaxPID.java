@@ -95,6 +95,9 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
 
         this.m_name = (String) Arr[7];
 
+        this.m_driveMotor.setCANTimeout(200);
+        this.m_turningMotor.setCANTimeout(200);
+
         // Drive Motor Encoder
         this.m_driveMotorEncoder = m_driveMotor.getEncoder();
         this.m_driveMotorEncoder.setPositionConversionFactor(Constants.Swerve.Module.kDriveEncoder_RotationToMeter); 
@@ -195,8 +198,8 @@ public class SwerveModuleIOSparkMaxPID implements SwerveModuleIO {
         // Set the drive motor speed
         // The speed is given in meters per second, so we need to convert from [-1, 1]
         // ! PAST IMPLEMENTATION (NOT ACCURATE)
-        // m_driveMotor.set(optimizedState.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
-        m_driveMotorPIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
+        m_driveMotor.set(state.speedMetersPerSecond / Constants.Swerve.Physical.kMaxSpeedMetersPerSecond);
+        //m_driveMotorPIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
 
         Logger.recordOutput("SwerveDrive/" + getName() + "AppliedSpeed", m_driveMotor.getAppliedOutput());
 

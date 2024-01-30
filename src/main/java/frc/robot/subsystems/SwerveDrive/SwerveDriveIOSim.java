@@ -48,6 +48,10 @@ public class SwerveDriveIOSim implements SwerveDriveIO {
         });
     }
 
+    public void zeroHeading() {
+        this.heading = 0;
+    }
+
     /**
      * Get the current ROBOT RELATIVE ChassisSpeeds
      * @return ChassisSpeeds

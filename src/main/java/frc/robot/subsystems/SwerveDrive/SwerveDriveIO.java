@@ -41,6 +41,7 @@ public interface SwerveDriveIO {
     public ChassisSpeeds getRobotRelativeChassisSpeeds();
     public void setModuleStates(SwerveModuleState[] desiredStates);
     public void stopModules();
+    public void zeroHeading();
     public void drive(ChassisSpeeds speeds);
     public void driveFieldRelative(double xSpeed, double ySpeed, double rotSpeed);
     public void driveFieldRelative(ChassisSpeeds speeds);

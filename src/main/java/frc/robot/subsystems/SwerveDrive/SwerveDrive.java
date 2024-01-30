@@ -82,6 +82,10 @@ public class SwerveDrive extends SubsystemBase {
     return io.getModulePositions();
   }
 
+  public void zeroHeading() {
+    io.zeroHeading();
+  }
+
   @Override
   public void periodic() {
     this.io.updateInputs(inputs);

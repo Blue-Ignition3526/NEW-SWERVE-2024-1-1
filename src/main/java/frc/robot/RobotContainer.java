@@ -5,30 +5,20 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveSwerve;
-import frc.robot.commands.Intake.IntakeIn;
-import frc.robot.commands.Intake.IntakeOut;
+import frc.robot.commands.XFormation;
+import frc.robot.commands.ZeroHeading;
 import frc.robot.subsystems.SwerveDrive.SwerveDrive;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOReal;
 import frc.robot.subsystems.SwerveDrive.SwerveDriveIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModule;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSim;
 import frc.robot.subsystems.SwerveModule.SwerveModuleIOSparkMaxPID;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Gyro.Gyro;
 import frc.robot.subsystems.Gyro.GyroIONavX;
 import frc.robot.subsystems.Gyro.GyroIOPigeon;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIOReal;
-import frc.robot.subsystems.Intake.IntakeIOSim;
 
 
 /**
@@ -39,6 +29,7 @@ public class RobotContainer {
    * Main driver controller
    */
   private final CommandXboxController m_driverController = new CommandXboxController(0);
+
 
   /**
    * Front Left Swerve Module
@@ -65,18 +56,6 @@ public class RobotContainer {
    */
   SwerveDrive m_swerveDrive;
 
-  /**
-   * Intake
-   */
-  Intake m_intake;
-
-  /**
-   * Autonomous Command Chooser
-   */
-  SendableChooser<Command> m_autonomousChooser;
-
-  PoseEstimatorSubsystem poseEstimator;
-
   public RobotContainer() {
     if (Robot.isReal()) {
       // Create all swerve modules and initialize
@@ -88,13 +67,8 @@ public class RobotContainer {
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(
         new SwerveDriveIOReal(m_frontLeft, m_frontRight, m_backLeft, m_backRight,
-        new Gyro(new GyroIOPigeon(34)))
+        new Gyro(new GyroIONavX()))
       );
-
-      this.poseEstimator = new PoseEstimatorSubsystem(m_swerveDrive);
-
-      // Create a new intake
-      this.m_intake = new Intake(new IntakeIOReal(30, 31));
 
       Logger.recordMetadata("Robot", "Real");
     } else {
@@ -107,19 +81,8 @@ public class RobotContainer {
       // Create the swerve drive and initialize
       this.m_swerveDrive = new SwerveDrive(new SwerveDriveIOSim(m_frontLeft, m_frontRight, m_backLeft, m_backRight));
 
-      // Create a new intake
-      this.m_intake = new Intake(new IntakeIOSim());
-
       Logger.recordMetadata("Robot", "Sim");
     }
-
-    // Register all commands needed for Autonomous
-    NamedCommands.registerCommand("IntakeIn", new IntakeIn(m_intake));
-    NamedCommands.registerCommand("IntakeOut", new IntakeOut(m_intake));
-
-    // Create a sendable chooser for the autonomous routines
-    this.m_autonomousChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Autonomous Command", this.m_autonomousChooser);
     
     // Configure the controller bindings
     configureBindings();
@@ -137,9 +100,9 @@ public class RobotContainer {
         () -> m_driverController.leftTrigger(0.1).getAsBoolean()
       )
     );
-    
-    m_driverController.x().whileTrue(new IntakeIn(m_intake));
-    m_driverController.rightTrigger(0.1).whileTrue(new IntakeOut(m_intake));
+
+    m_driverController.y().onTrue(new ZeroHeading(m_swerveDrive));
+    m_driverController.x().onTrue(new XFormation(m_swerveDrive));
   }
 
   /**
@@ -147,6 +110,6 @@ public class RobotContainer {
    * @return Command
    */
   public Command getAutonomousCommand() {
-    return m_autonomousChooser.getSelected();
+    return null;
   }
 }

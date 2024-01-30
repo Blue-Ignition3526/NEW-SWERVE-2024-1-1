@@ -99,8 +99,8 @@ public class DriveSwerve extends Command {
     rotSpeed = Math.abs(rotSpeed) > Constants.Operator.kDeadzone ? rotSpeed : 0.0;
 
     // Multiply by the top speed
-    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
-    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond / 1.5;
+    xSpeed = xLimiter.calculate(xSpeed) * Physical.kTeleopMaxSpeedMetersPerSecond;
+    ySpeed = yLimiter.calculate(ySpeed) * Physical.kTeleopMaxSpeedMetersPerSecond;
     rotSpeed = rotLimiter.calculate(rotSpeed) * Physical.kTeleopMaxAngularSpeedRadiansPerSecond;
 
     if (trackAprilTag.get()) rotSpeed = Constants.Vision.m_activeTrackPIDController.calculate(LimelightHelpers.getTX(kLimelightName), 0.0);

@@ -154,14 +154,14 @@ public final class Constants {
         public static final Translation2d m_backLeftLocation = new Translation2d(-kWheelBase/2, -kTrackWidth/2); // Back Left Wheel Location
         public static final Translation2d m_backRightLocation = new Translation2d(-kWheelBase/2, kTrackWidth/2); // Back Right Wheel Location
 
-        public static final double kMaxSpeedMetersPerSecond = 15.0; // Maxima Velocidad en Metros por Segundo
+        public static final double kMaxSpeedMetersPerSecond = 7.5; // Maxima Velocidad en Metros por Segundo
         //public static final double kMaxSpeedMetersPerSecond = 5.0; // Maxima Velocidad en Metros por Segundo
         public static final double kMaxAngularSpeedRadiansPerSecond = 3 * 2.0 * Math.PI; // Maxima Velocidad Angular en Radianes por Segundo
 
         public static final double kMaxAccelerationUnitsPerSecond = 15; // Maxima Aceleracion
         public static final double kMaxAngularAccelerationUnitsPerSecond = 1.5 * Math.PI; // Maxima Aceleracion Angular
 
-        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond / 1.5; // Maxima Velocidad en Metros por Segundo
+        public static final double kTeleopMaxSpeedMetersPerSecond = kMaxSpeedMetersPerSecond; // Maxima Velocidad en Metros por Segundo
         public static final double kTeleopMaxAngularSpeedRadiansPerSecond = kMaxAngularSpeedRadiansPerSecond / 2.0; // Maxima Velocidad Angular en Radianes por Segundo
 
         public static final double kTeleopMaxAccelerationUnitsPerSecond = 3.0; // Maxima Aceleracion

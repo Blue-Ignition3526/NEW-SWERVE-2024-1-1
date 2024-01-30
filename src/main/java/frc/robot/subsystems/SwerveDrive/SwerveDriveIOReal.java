@@ -88,6 +88,10 @@ public class SwerveDriveIOReal implements SwerveDriveIO {
         );
     }
 
+    public void zeroHeading() {
+        m_gyro.reset();
+    }
+
     /**
      * Configure the auto builder
      * @param swerveDrive The swerve drive subsystem
